@@ -109,7 +109,6 @@ proc read(self: Process, address: ByteAddress, t: typedesc): t =
   if self.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
-
 proc write(self: Process, address: ByteAddress, data: any) =
   if WriteProcessMemory(
     self.handle, cast[pointer](address), data.unsafeAddr, sizeof(data), nil

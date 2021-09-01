@@ -22,15 +22,11 @@ def main():
     local_addr = read_int(ac_proc, Pointer.local_player)
 
     # No Recoil
-    old_prot = page_protection(ac_proc, ac_base + Offsets.recoil)
-    write_int(ac_proc, ac_base + Offsets.recoil, 0)
-    page_protection(ac_proc, ac_base + Offsets.recoil, old_prot)
+    patch_bytes(ac_proc, ac_base + Offsets.recoil, [0, 0, 0, 0])
 
-    # Health / Armor
+    # Health / Armor / Ammo
     write_int(ac_proc, local_addr + Offsets.health, 1337)
     write_int(ac_proc, local_addr + Offsets.armor, 1337)
-
-    # Ammo
     write_int(ac_proc, local_addr + Offsets.rifle_ammo, 1337)
     write_int(ac_proc, local_addr + Offsets.rifle_clip, 1337)
     write_int(ac_proc, local_addr + Offsets.pistol_ammo, 1337)

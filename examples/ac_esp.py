@@ -1,5 +1,6 @@
 from pymeow import *
 
+DEBUG = False
 
 class Pointer:
     player_count = 0x0050F500
@@ -36,7 +37,7 @@ class Entity:
 
 
 def main():
-    mem = process_by_name("ac_client.exe")
+    mem = process_by_name("ac_client.exe", DEBUG)
     overlay = overlay_init("AssaultCube")
     font = font_init(10, "Tahoma")
     set_foreground("AssaultCube")
