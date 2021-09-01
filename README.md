@@ -1,6 +1,6 @@
 # PyMeow
 #### Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
-
+#### I'm looking for community projects. Made something cool with PyMeow? Contact me on discord: qb#2308
 ##### <ins>Installation / Usage</ins>
 - Make sure you use a **64bit** version of Python 3
 - Download the latest PyMeow Module from the ![Release Section](https://github.com/qb-0/PyMeow/releases)
@@ -11,9 +11,9 @@
 ## <ins>Cheatsheet:</ins>
 ##### <ins>Memory</ins>
 ```
-process_by_name(name: string) -> Process
-process_by_pid(pid: int) -> Process
-wait_for_process(name: string) -> Process
+process_by_name(name: string, debug: bool = false) -> Process
+process_by_pid(pid: int, debug: bool = false) -> Process
+wait_for_process(name: string, interval: int = 1500, debug: bool = false) -> Process
 enumerate_processes() -> Process (iterator)
 close(Process) -> bool
 

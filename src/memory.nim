@@ -47,13 +47,14 @@ proc pidInfo(pid: int32): Process =
       )
       result.modules[nullTerminated($$me.szModule)] = m
 
-proc process_by_pid(pid: int32): Process {.exportpy.} =
+proc process_by_pid(pid: int32, debug: bool = false): Process {.exportpy.} =
   result = pidInfo(pid)
   result.handle = OpenProcess(PROCESS_ALL_ACCESS, 0, pid).int32
+  result.debug = debug
   if result.handle == 0:
     raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
 
-proc process_by_name(name: string): Process {.exportpy.} =
+proc process_by_name(name: string, debug: bool = false): Process {.exportpy.} =
   var 
     pidArray = newSeq[int32](2048)
     read: int32
@@ -64,6 +65,7 @@ proc process_by_name(name: string): Process {.exportpy.} =
     var p = pidInfo(pidArray[i])
     if p.pid != 0 and name == p.name:
       p.handle = OpenProcess(PROCESS_ALL_ACCESS, 0, p.pid).int32
+      p.debug = debug
       if p.handle != 0:
         return p
       raise newException(Exception, fmt"Unable to open Process [Pid: {p.pid}] [Error code: {GetLastError()}]")
@@ -82,10 +84,10 @@ iterator enumerate_processes: Process {.exportpy.} =
     if p.pid != 0: 
       yield p
 
-proc wait_for_process(name: string, interval: int = 1500): Process {.exportpy.} =
+proc wait_for_process(name: string, interval: int = 1500, debug: bool = false): Process {.exportpy.} =
   while true:
     try:
-      return process_by_name(name)
+      return process_by_name(name, debug)
     except:
       sleep(interval)
 
