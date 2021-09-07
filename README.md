@@ -4,7 +4,7 @@
 ##### <ins>Installation / Usage</ins>
 - Make sure you use a **64bit** version of Python 3
 - Download the latest PyMeow Module from the ![Release Section](https://github.com/qb-0/PyMeow/releases)
-- Import the Module in your Python Script
+- Extract the files and use pip to install PyMeow (pip install .)
 
 ### ![Examples](https://github.com/qb-0/PyMeow#assault-cube-esp)
 
