@@ -3,6 +3,7 @@ import pymeow as pm
 from math import fmod
 from time import time
 
+
 def main():
     overlay = pm.overlay_init()
     font = pm.font_init(20, "Impact")
@@ -14,7 +15,6 @@ def main():
     
     frames, fps = 0, 0
     prev_time = time()
-    curr_time = None
 
     star_offset = 100
     star_x = overlay["midX"] - 70
@@ -76,5 +76,7 @@ def main():
             filled=True,
         )
 
+
 if __name__ == "__main__":
     main()
+

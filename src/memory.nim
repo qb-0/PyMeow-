@@ -40,7 +40,7 @@ proc pidInfo(pid: int32): Process =
       basesize: result.basesize,
     )
 
-    while Module32Next(snap, me.addr) != 0:
+    while Module32Next(snap, me.addr) != FALSE:
       var m = Module(
         baseaddr: cast[ByteAddress](me.modBaseAddr),
         basesize: me.modBaseSize,

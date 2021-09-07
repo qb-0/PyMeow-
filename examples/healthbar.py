@@ -8,16 +8,16 @@ def main():
     y = 500
     bar_length = 300
     bar_width = 5
-    maxHealth = 200
+    max_health = 200
 
     while overlay_loop(overlay):
-        for health in range(maxHealth, 0, -1):
+        for health in range(max_health, 0, -1):
             # Vertical Healthbar
             value_bar(
                 x, y,
                 x, y + bar_length,
                 bar_width,
-                maxHealth,
+                max_health,
                 health,
             )
 
@@ -26,7 +26,7 @@ def main():
                 x, y - 12,
                 x + bar_length, y - 12,
                 bar_width,
-                maxHealth,
+                max_health,
                 health,
                 vertical=False
             )

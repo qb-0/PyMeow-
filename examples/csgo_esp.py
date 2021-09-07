@@ -97,7 +97,7 @@ def main():
                     if not ent.dormant and ent.health > 0:
                         try:
                             ent.wts = wts_dx(overlay, view_matrix, ent.pos)
-                            #ent.glow()
+                            # ent.glow()
                             head_pos = wts_dx(overlay, view_matrix, ent.bone_pos(8))
                             head = head_pos["y"] - ent.wts["y"]
                             width = head / 2
