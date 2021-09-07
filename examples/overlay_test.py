@@ -1,7 +1,7 @@
 import pymeow as pm
 
 from math import fmod
-from time import time
+from time import time, sleep
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
     radius = 50
     r, g, b = 0.0, 0.3, 0.6
     x, y = overlay["midX"], overlay["midY"]
-    speed = 0.1
+    speed = 5
     ball_left, ball_down = False, False
     
     frames, fps = 0, 0
@@ -27,6 +27,7 @@ def main():
     ]
 
     while pm.overlay_loop(overlay):
+        sleep(0.001)
         pm.custom_shape(star_points, pm.rgb("yellow"))
         curr_time = time()
         frames += 1

@@ -39,7 +39,8 @@ def main():
                 rgb("white"), rgb("black")
             )
 
-            sleep(0.01)
+            overlay_update(overlay)
+            sleep(0.001)
 
 
 if __name__ == '__main__':
