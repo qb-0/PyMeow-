@@ -31,6 +31,7 @@ proc overlay_init(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOf
   glfwWindowHint(GLFWDecorated, GLFWFalse)
   glfwWindowHint(GLFWResizable, GLFWFalse)
   glfwWindowHint(GLFWTransparentFramebuffer, GLFWTrue)
+  glfwWindowHint(GLFWMouseButtonPassthrough, GLFWTrue)
   glfwWindowHint(GLFWSamples, 8)
 
   result.exitKey = exitKey
@@ -66,8 +67,6 @@ proc overlay_init(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOf
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
   result.hwnd = cast[int](getWin32Window(OverlayWindow))
-  # Note: GLFW_MOUSE_PASSTHROUGH window hint will be supported in GLFW 3.4
-  SetWindowLong(result.hwnd, GWL_EXSTYLE, GetWindowLongW(result.hwnd, GWL_EXSTYLE) or WS_EX_TRANSPARENT or WS_EX_LAYERED)
   if target != "Fullscreen":
     SetWindowPos(result.hwnd, -1, rect.left, rect.top + borderOffset, 0, 0, 0x0001)
 
