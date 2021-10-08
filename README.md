@@ -67,7 +67,7 @@ page_protection(Process, address: int, newProtection: int = 0x40) -> int (old pr
 overlay_init(target: string = "Fullscreen", exitKey: int = 0x23 (END), borderOffset: int = 25) -> Overlay
 overlay_close(Overlay)
 overlay_deinit()
-overlay_loop(Overlay) -> bool
+overlay_loop(Overlay, update: bool = true) -> bool
 overlay_set_pos(Overlay, x, y: int)
 ```
 ##### <ins>Drawing</ins>
