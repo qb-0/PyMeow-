@@ -6,6 +6,11 @@
 - Download the latest PyMeow Module from the ![Release Section](https://github.com/qb-0/PyMeow/releases)
 - Extract the files and use pip to install PyMeow (pip install .)
 
+##### <ins>Compiling</ins>
+- Download and install [nim](https://nim-lang.org/install.html) and [git for windows](https://gitforwindows.org/)
+- Install external dependencies: `nimble -y install winim nimgl nimpy regex`
+- Clone and Compile: `git clone https://github.com/qb-0/PyMeow && cd PyMeow && nim c pymeow`
+
 ### ![Examples](https://github.com/qb-0/PyMeow#assault-cube-esp)
 
 ## <ins>Cheatsheet:</ins>
