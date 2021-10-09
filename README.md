@@ -14,7 +14,6 @@
 ## ![Cheatsheet](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
 
 ## Examples
----
 ## [CSGo ESP](https://github.com/qb-0/PyMeow/blob/master/examples/csgo_esp.py):
 <img src="https://github.com/qb-0/PyMeow/blob/master/examples/screenshots/csgo_py.png" alt="alt text" width="650" height="450">
 
