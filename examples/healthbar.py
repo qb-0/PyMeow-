@@ -39,7 +39,6 @@ def main():
                 rgb("white"), rgb("black")
             )
 
-            overlay_update(overlay)
             sleep(0.001)
 
 
