@@ -3,6 +3,8 @@ import
   nimpy, winim,
   overlay, vector
 
+const cheatsheet = staticRead("../cheatsheet.txt")
+
 pyExportModule("pymeow")
 
 proc key_pressed(vKey: int32): bool {.exportpy.} =
@@ -76,3 +78,6 @@ proc wts_dx(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.export
 
   result.x = (a.width / 2 * ndc.x) + (ndc.x + a.width / 2)
   result.y = (a.height / 2 * ndc.y) + (ndc.y + a.height / 2)
+
+proc help() {.exportpy.} =
+  echo cheatsheet
