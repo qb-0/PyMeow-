@@ -47,14 +47,14 @@ proc pidInfo(pid: int32): Process =
       )
       result.modules[nullTerminated($$me.szModule)] = m
 
-proc process_by_pid(pid: int32, debug: bool = false): Process {.exportpy.} =
+proc process_by_pid(pid: int32, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy.} =
   result = pidInfo(pid)
-  result.handle = OpenProcess(0x1F0FFF, 1, pid).int32
+  result.handle = OpenProcess(rights, 1, pid).int32
   result.debug = debug
   if result.handle == 0:
     raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
 
-proc process_by_name(name: string, debug: bool = false): Process {.exportpy.} =
+proc process_by_name(name: string, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy.} =
   var 
     pidArray = newSeq[int32](2048)
     read: int32
@@ -64,7 +64,7 @@ proc process_by_name(name: string, debug: bool = false): Process {.exportpy.} =
   for i in 0..<read div 4:
     var p = pidInfo(pidArray[i])
     if p.pid != 0 and name == p.name:
-      p.handle = OpenProcess(0x1F0FFF, 1, p.pid).int32
+      p.handle = OpenProcess(rights, 1, p.pid).int32
       p.debug = debug
       if p.handle != 0:
         return p
