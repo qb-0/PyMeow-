@@ -16,8 +16,8 @@
 ## <ins>Cheatsheet:</ins>
 ##### <ins>Memory</ins>
 ```nim
-process_by_name(name: string, debug: bool = false) -> Process
-process_by_pid(pid: int, debug: bool = false) -> Process
+process_by_name(name: string, debug: bool = false, rights: int = 0x1F0FFF) -> Process
+process_by_pid(pid: int, debug: bool = false, rights: int = 0x1F0FFF) -> Process
 wait_for_process(name: string, interval: int = 1500, debug: bool = false) -> Process
 enumerate_processes() -> Process (iterator)
 close(Process) -> bool
