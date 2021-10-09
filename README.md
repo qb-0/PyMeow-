@@ -15,7 +15,7 @@
 
 ## <ins>Cheatsheet:</ins>
 ##### <ins>Memory</ins>
-```
+```nim
 process_by_name(name: string, debug: bool = false) -> Process
 process_by_pid(pid: int, debug: bool = false) -> Process
 wait_for_process(name: string, interval: int = 1500, debug: bool = false) -> Process
