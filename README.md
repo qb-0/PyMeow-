@@ -1,5 +1,7 @@
 # PyMeow
 #### Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
+### [Cheatsheet](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
+
 #### I'm looking for community projects. Made something cool with PyMeow? Contact me on discord: qb#2308
 ##### <ins>Installation / Usage</ins>
 - Make sure you use a **64bit** version of Python 3
@@ -11,9 +13,6 @@
 - Install external dependencies: `nimble -y install winim nimgl nimpy regex`
 - Clone and Compile: `git clone https://github.com/qb-0/PyMeow && cd PyMeow && nim c pymeow`
 
-## ![Cheatsheet](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
-
-## Examples
 ## [CSGo ESP](https://github.com/qb-0/PyMeow/blob/master/examples/csgo_esp.py):
 <img src="https://github.com/qb-0/PyMeow/blob/master/examples/screenshots/csgo_py.png" alt="alt text" width="650" height="450">
 
