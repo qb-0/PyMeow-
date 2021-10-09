@@ -63,7 +63,7 @@ inject_dll(Process, dllPath: string)
 page_protection(Process, address: int, newProtection: int = 0x40) -> int (old protection)
 ```
 ##### <ins>Overlay</ins>
-```
+```nim
 overlay_init(target: string = "Fullscreen", exitKey: int = 0x23 (END), borderOffset: int = 25) -> Overlay
 overlay_close(Overlay)
 overlay_deinit()
@@ -71,7 +71,7 @@ overlay_loop(Overlay, update: bool = true) -> bool
 overlay_set_pos(Overlay, x, y: int)
 ```
 ##### <ins>Drawing</ins>
-```
+```nim
 font_init(height: int, fontName: string) -> Font
 font_deinit(Font)
 font_print(Font, x, y: float, text: string, color: rgb array)
@@ -96,7 +96,7 @@ value_bar_v(pos1, pos2: Vec2, width, maxValue, value: float, vertical: bool = tr
 custom_shape(points: Vec2 array, color: rgb array, filled: bool = true, alpha: float = 1.0)
 ```
 ##### <ins>Vector</ins>
-```
+```nim
 vec2(x, y: float = 0) -> Vec2
 vec2_add(a, b: Vec2) -> Vec2
 vec2_del(a, b: Vec2) -> Vec2
@@ -118,7 +118,7 @@ vec3_distance(a, b: Vec3) -> float
 vec3_closest(a: Vec2, b: Vec3 array) -> Vec3
 ```
 ##### <ins>Misc</ins>
-```
+```nim
 key_pressed(vKey: int) -> bool
 rgb(color: string) -> float array
 wts_ogl(Overlay, matrix: float array (16), pos: Vec3) -> Vec2
