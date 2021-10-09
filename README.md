@@ -1,6 +1,6 @@
 # PyMeow
 #### Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
-### [Cheatsheet](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
+#### [Cheatsheet / Features](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
 
 #### I'm looking for community projects. Made something cool with PyMeow? Contact me on discord: qb#2308
 ##### <ins>Installation / Usage</ins>
