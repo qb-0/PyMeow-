@@ -69,11 +69,19 @@ def main():
         r = fmod(r + 0.001, 1)
         g = fmod(g + 0.002, 1)
         b = fmod(b + 0.003, 1)
+
         pm.circle(
             x=x,
             y=y,
             radius=radius,
             color=[r, g, b],
+            filled=False,
+        )
+        pm.circle(
+            x=x,
+            y=y,
+            radius=radius - 15,
+            color=[g, b, r],
             filled=True,
         )
 
