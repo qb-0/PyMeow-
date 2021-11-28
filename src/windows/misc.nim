@@ -3,7 +3,7 @@ import
   nimpy, winim,
   overlay, vector
 
-const cheatsheet = staticRead("../cheatsheet.txt")
+const cheatsheet = staticRead("../../cheatsheet.txt")
 
 pyExportModule("pymeow")
 
