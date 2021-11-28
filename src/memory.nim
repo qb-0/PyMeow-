@@ -87,7 +87,7 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
 proc waitForProcess(name: string, interval: int = 1500, debug: bool = false): Process {.exportpy: "wait_for_process".} =
   while true:
     try:
-      return process_by_name(name, debug)
+      return processByName(name, debug)
     except:
       sleep(interval)
 
