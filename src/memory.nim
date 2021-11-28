@@ -51,7 +51,7 @@ proc process_by_pid(pid: int32, debug: bool = false, rights: int32 = 0x1F0FFF): 
   result = pidInfo(pid)
   result.handle = OpenProcess(rights, 1, pid).int32
   result.debug = debug
-  if result.handle == 0:
+  if result.handle == FALSE:
     raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
 
 proc process_by_name(name: string, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy.} =
@@ -92,7 +92,7 @@ proc wait_for_process(name: string, interval: int = 1500, debug: bool = false): 
       sleep(interval)
 
 proc close(a: Process): bool {.discardable, exportpy.} = 
-  CloseHandle(a.handle) == 1
+  CloseHandle(a.handle) == TRUE
 
 proc memoryErr(m: string, a: ByteAddress) {.inline.} =
   raise newException(
@@ -103,7 +103,7 @@ proc memoryErr(m: string, a: ByteAddress) {.inline.} =
 proc read(self: Process, address: ByteAddress, t: typedesc): t =
   if ReadProcessMemory(
     self.handle, cast[pointer](address), result.addr, sizeof(t), nil
-  ) == 0:
+  ) == FALSE:
     memoryErr("Read", address)
 
   if self.debug:
@@ -112,7 +112,7 @@ proc read(self: Process, address: ByteAddress, t: typedesc): t =
 proc write(self: Process, address: ByteAddress, data: auto) =
   if WriteProcessMemory(
     self.handle, cast[pointer](address), data.unsafeAddr, sizeof(data), nil
-  ) == 0:
+  ) == FALSE:
     memoryErr("Write", address)
   
   if self.debug:
@@ -121,7 +121,7 @@ proc write(self: Process, address: ByteAddress, data: auto) =
 proc writeArray[T](self: Process, address: ByteAddress, data: openArray[T]) =
   if WriteProcessMemory(
     self.handle, cast[pointer](address), data.unsafeAddr, sizeof(T) * data.len, nil
-  ) == 0:
+  ) == FALSE:
     memoryErr("Write", address)
 
 proc pointer_chain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): ByteAddress {.exportpy.} =
@@ -133,7 +133,7 @@ proc readSeq(a: Process, address: ByteAddress, size: SIZE_T,  t: typedesc = byte
   result = newSeq[t](size)
   if ReadProcessMemory(
     a.handle, cast[pointer](address), result[0].addr, size * sizeof(t), nil
-  ) == 0:
+  ) == FALSE:
     memoryErr("readSeq", address)
 
 proc aob_scan(a: Process, pattern: string, module: Module = Module()): ByteAddress {.exportpy.} =
@@ -188,7 +188,7 @@ proc patch_bytes(a: Process, address: ByteAddress, data: openArray[byte]) {.expo
 proc inject_dll(a: Process, dllPath: string) {.exportpy.} =
   let vPtr = VirtualAllocEx(a.handle, nil, dllPath.len(), MEM_RESERVE or MEM_COMMIT, PAGE_EXECUTE_READWRITE)
   WriteProcessMemory(a.handle, vPtr, dllPath[0].unsafeAddr, dllPath.len, nil)
-  if CreateRemoteThread(a.handle, nil, 0, cast[LPTHREAD_START_ROUTINE](LoadLibraryA), vPtr, 0, nil) == 0:
+  if CreateRemoteThread(a.handle, nil, 0, cast[LPTHREAD_START_ROUTINE](LoadLibraryA), vPtr, 0, nil) == FALSE:
     raise newException(Exception, fmt"Injection failed [Error: {GetLastError()}]")
 
 proc page_protection(a: Process, address: ByteAddress, newProtection: int32 = 0x40): int32 {.exportpy.} =
