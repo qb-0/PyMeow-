@@ -3,6 +3,8 @@ import
   strutils, sequtils, posix,
   regex, nimpy, vector
 
+pyExportModule("pymeow")
+
 type
   Process* = object
     name*: string
@@ -88,6 +90,9 @@ proc readSeq*(a: Process, address: ByteAddress, size: int, t: typedesc = byte): 
   process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
 
 proc processByName*(name: string): Process {.exportpy: "process_by_name"} =
+  if getuid() != 0:
+    raise newException(IOError, "Root required!")
+
   let allFiles = toSeq(walkDir("/proc", relative = true))
   for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
       let procName = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
@@ -100,6 +105,9 @@ proc processByName*(name: string): Process {.exportpy: "process_by_name"} =
   raise newException(IOError, fmt"Process not found ({name})")
 
 proc processByPid*(pid: int): Process {.exportpy: "process_by_pid".} =
+  if getuid() != 0:
+    raise newException(IOError, "Root required!")
+  
   try:
     result.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
     result.pid = pid
