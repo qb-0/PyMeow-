@@ -108,7 +108,7 @@ proc loop*(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
   not OverlayWindow.windowShouldClose()
 
 #[
-  2d drawings
+  2d shapes
 ]#
 
 proc box*(x, y, width, height, lineWidth: float, color: array[0..2, float32]) {.exportpy.} =
@@ -237,6 +237,10 @@ proc renderString*(x, y: float, text: string, color: array[0..2, float32], align
 
   for c in text:
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
+
+#[
+  world to screen
+]#
 
 proc wtsOgl(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy: "wts_ogl".} =
   var 
