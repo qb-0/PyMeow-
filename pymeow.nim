@@ -9,4 +9,10 @@ when defined(windows):
     overlay,
     vector
   ]
+
+when defined(linux):
+  import src/linux/[
+    memory,
+    vector
+  ]
 {. warning[UnusedImport]:off .}
