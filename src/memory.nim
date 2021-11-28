@@ -47,14 +47,14 @@ proc pidInfo(pid: int32): Process =
       )
       result.modules[nullTerminated($$me.szModule)] = m
 
-proc process_by_pid(pid: int32, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy.} =
+proc processByPid(pid: int32, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy: "process_by_pid".} =
   result = pidInfo(pid)
   result.handle = OpenProcess(rights, 1, pid).int32
   result.debug = debug
   if result.handle == FALSE:
     raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
 
-proc process_by_name(name: string, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy.} =
+proc processByName(name: string, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy: "process_by_name".} =
   var 
     pidArray = newSeq[int32](2048)
     read: int32
@@ -72,7 +72,7 @@ proc process_by_name(name: string, debug: bool = false, rights: int32 = 0x1F0FFF
       
   raise newException(Exception, fmt"Process '{name}' not found")
 
-iterator enumerate_processes: Process {.exportpy.} =
+iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
   var 
     pidArray = newSeq[int32](2048)
     read: int32
@@ -84,7 +84,7 @@ iterator enumerate_processes: Process {.exportpy.} =
     if p.pid != 0: 
       yield p
 
-proc wait_for_process(name: string, interval: int = 1500, debug: bool = false): Process {.exportpy.} =
+proc waitForProcess(name: string, interval: int = 1500, debug: bool = false): Process {.exportpy: "wait_for_process".} =
   while true:
     try:
       return process_by_name(name, debug)
@@ -124,7 +124,7 @@ proc writeArray[T](self: Process, address: ByteAddress, data: openArray[T]) =
   ) == FALSE:
     memoryErr("Write", address)
 
-proc pointer_chain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): ByteAddress {.exportpy.} =
+proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): ByteAddress {.exportpy: "pointer_chain".} =
   result = a.read(baseAddr, ByteAddress)
   for o in offsets:
     result = a.read(result + o, ByteAddress)
@@ -136,7 +136,7 @@ proc readSeq(a: Process, address: ByteAddress, size: SIZE_T,  t: typedesc = byte
   ) == FALSE:
     memoryErr("readSeq", address)
 
-proc aob_scan(a: Process, pattern: string, module: Module = Module()): ByteAddress {.exportpy.} =
+proc aobScan(a: Process, pattern: string, module: Module = Module()): ByteAddress {.exportpy: "aob_scan".} =
   var 
     scanBegin, scanEnd: int
     rePattern = re(
@@ -171,64 +171,64 @@ proc aob_scan(a: Process, pattern: string, module: Module = Module()): ByteAddre
     if r.len != 0:
       return r[0].a div 2 + curAddr
 
-proc nop_code(a: Process, address: ByteAddress, length: int = 1) {.exportpy.} =
+proc nopCode(a: Process, address: ByteAddress, length: int = 1) {.exportpy: "nop_code".} =
   var oldProt: int32
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), length, 0x40, oldProt.addr)
   for i in 0..length-1:
     a.write(address + i, 0x90.byte)
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), length, oldProt, nil)
 
-proc patch_bytes(a: Process, address: ByteAddress, data: openArray[byte]) {.exportpy.} =
+proc patchBytes(a: Process, address: ByteAddress, data: openArray[byte]) {.exportpy: "patch_bytes".} =
   var oldProt: int32
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), data.len, 0x40, oldProt.addr)
   for i, b in data:
     a.write(address + i, b)
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), data.len, oldProt, nil)
 
-proc inject_dll(a: Process, dllPath: string) {.exportpy.} =
+proc injectDll(a: Process, dllPath: string) {.exportpy: "inject_dll".} =
   let vPtr = VirtualAllocEx(a.handle, nil, dllPath.len(), MEM_RESERVE or MEM_COMMIT, PAGE_EXECUTE_READWRITE)
   WriteProcessMemory(a.handle, vPtr, dllPath[0].unsafeAddr, dllPath.len, nil)
   if CreateRemoteThread(a.handle, nil, 0, cast[LPTHREAD_START_ROUTINE](LoadLibraryA), vPtr, 0, nil) == FALSE:
     raise newException(Exception, fmt"Injection failed [Error: {GetLastError()}]")
 
-proc page_protection(a: Process, address: ByteAddress, newProtection: int32 = 0x40): int32 {.exportpy.} =
+proc pageProtection(a: Process, address: ByteAddress, newProtection: int32 = 0x40): int32 {.exportpy: "page_protection".} =
   var mbi = MEMORY_BASIC_INFORMATION()
   discard VirtualQueryEx(a.handle, cast[LPCVOID](address), mbi.addr, cast[SIZE_T](sizeof(mbi)))
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), mbi.RegionSize, newProtection, result.addr)
 
-proc read_string(a: Process, address: ByteAddress): string {.exportpy.} =
+proc readString(a: Process, address: ByteAddress): string {.exportpy: "read_string".} =
   let r = a.read(address, array[0..100, char])
   $cast[cstring](r[0].unsafeAddr)
-proc read_int(a: Process, address: ByteAddress): int32 {.exportpy.} = a.read(address, int32)
-proc read_ints(a: Process, address: ByteAddress, size: int32): seq[int32] {.exportpy.} = a.readSeq(address, size, int32)
-proc read_int16(a: Process, address: ByteAddress): int16 {.exportpy.} = a.read(address, int16)
-proc read_ints16(a: Process, address: ByteAddress, size: int32): seq[int16] {.exportpy.} = a.readSeq(address, size, int16)
-proc read_int64(a: Process, address: ByteAddress): int64 {.exportpy.} = a.read(address, int64)
-proc read_ints64(a: Process, address: ByteAddress, size: int32): seq[int64] {.exportpy.} = a.readSeq(address, size, int64)
-proc read_uint(a: Process, address: ByteAddress): uint32 {.exportpy.} = a.read(address, uint32)
-proc read_uints(a: Process, address: ByteAddress, size: int32): seq[uint32] {.exportpy.} = a.readSeq(address, size, uint32)
-proc read_float(a: Process, address: ByteAddress): float32 {.exportpy.} = a.read(address, float32)
-proc read_floats(a: Process, address: ByteAddress, size: int32): seq[float32] {.exportpy.} = a.readSeq(address, size, float32)
-proc read_float64(a: Process, address: ByteAddress): float64 {.exportpy.} = a.read(address, float64)
-proc read_floats64(a: Process, address: ByteAddress, size: int32): seq[float64] {.exportpy.} = a.readSeq(address, size, float64)
-proc read_byte(a: Process, address: ByteAddress): byte {.exportpy.} = a.read(address, byte)
-proc read_bytes(a: Process, address: ByteAddress, size: int32): seq[byte] {.exportpy.} = a.readSeq(address, size, byte)
-proc read_vec2(a: Process, address: ByteAddress): Vec2 {.exportpy.} = a.read(address, Vec2)
-proc read_vec3(a: Process, address: ByteAddress): Vec3 {.exportpy.} = a.read(address, Vec3)
-proc read_bool(a: Process, address: ByteAddress): bool {.exportpy.} = a.read(address, byte).bool
+proc readInt(a: Process, address: ByteAddress): int32 {.exportpy: "read_int".} = a.read(address, int32)
+proc readInts(a: Process, address: ByteAddress, size: int32): seq[int32] {.exportpy: "read_ints".} = a.readSeq(address, size, int32)
+proc readInt16(a: Process, address: ByteAddress): int16 {.exportpy: "read_int16".} = a.read(address, int16)
+proc readInts16(a: Process, address: ByteAddress, size: int32): seq[int16] {.exportpy: "read_ints16".} = a.readSeq(address, size, int16)
+proc readInt64(a: Process, address: ByteAddress): int64 {.exportpy: "read_int64".} = a.read(address, int64)
+proc readInts64(a: Process, address: ByteAddress, size: int32): seq[int64] {.exportpy: "read_ints64".} = a.readSeq(address, size, int64)
+proc readUInt(a: Process, address: ByteAddress): uint32 {.exportpy: "read_uint".} = a.read(address, uint32)
+proc readUInts(a: Process, address: ByteAddress, size: int32): seq[uint32] {.exportpy: "read_uints".} = a.readSeq(address, size, uint32)
+proc readFloat(a: Process, address: ByteAddress): float32 {.exportpy: "read_float".} = a.read(address, float32)
+proc readFloats(a: Process, address: ByteAddress, size: int32): seq[float32] {.exportpy: "read_floats".} = a.readSeq(address, size, float32)
+proc readFloat64(a: Process, address: ByteAddress): float64 {.exportpy: "read_float64".} = a.read(address, float64)
+proc readFloats64(a: Process, address: ByteAddress, size: int32): seq[float64] {.exportpy: "read_floats64".} = a.readSeq(address, size, float64)
+proc readByte(a: Process, address: ByteAddress): byte {.exportpy: "read_byte".} = a.read(address, byte)
+proc readBytes(a: Process, address: ByteAddress, size: int32): seq[byte] {.exportpy: "read_bytes".} = a.readSeq(address, size, byte)
+proc readVec2(a: Process, address: ByteAddress): Vec2 {.exportpy: "read_vec2".} = a.read(address, Vec2)
+proc readVec3(a: Process, address: ByteAddress): Vec3 {.exportpy: "read_vec3".} = a.read(address, Vec3)
+proc readBool(a: Process, address: ByteAddress): bool {.exportpy: "read_bool".} = a.read(address, byte).bool
 
-template write_data = a.write(address, data)
-template write_datas = a.writeArray(address, data)
-proc write_int(a: Process, address: ByteAddress, data: int32) {.exportpy.} = write_data
-proc write_ints(a: Process, address: ByteAddress, data: openArray[int32]) {.exportpy.} = write_datas
-proc write_int16(a: Process, address: ByteAddress, data: int16) {.exportpy.} = write_data
-proc write_ints16(a: Process, address: ByteAddress, data: openArray[int16]) {.exportpy.} = write_datas
-proc write_int64(a: Process, address: ByteAddress, data: int64) {.exportpy.} = write_data
-proc write_ints64(a: Process, address: ByteAddress, data: openArray[int64]) {.exportpy.} = write_datas
-proc write_float(a: Process, address: ByteAddress, data: float32) {.exportpy.} = write_data
-proc write_floats(a: Process, address: ByteAddress, data: openArray[float32]) {.exportpy.} = write_datas
-proc write_byte(a: Process, address: ByteAddress, data: byte) {.exportpy.} = write_data
-proc write_bytes(a: Process, address: ByteAddress, data: openArray[byte]) {.exportpy.} = write_datas
-proc write_vec2(a: Process, address: ByteAddress, data: Vec2) {.exportpy.} = write_data
-proc write_vec3(a: Process, address: ByteAddress, data: Vec3) {.exportpy.} = write_data
-proc write_bool(a: Process, address: ByteAddress, data: bool) {.exportpy.} = a.write(address, data.byte)
+template writeData = a.write(address, data)
+template writeDatas = a.writeArray(address, data)
+proc writeInt(a: Process, address: ByteAddress, data: int32) {.exportpy: "write_int".} = writeData
+proc writeInts(a: Process, address: ByteAddress, data: openArray[int32]) {.exportpy: "write_ints".} = writeDatas
+proc writeInt16(a: Process, address: ByteAddress, data: int16) {.exportpy: "write_int16".} = writeData
+proc writeInts16(a: Process, address: ByteAddress, data: openArray[int16]) {.exportpy: "write_ints16".} = writeDatas
+proc writeInt64(a: Process, address: ByteAddress, data: int64) {.exportpy: "write_int64".} = writeData
+proc writeInts64(a: Process, address: ByteAddress, data: openArray[int64]) {.exportpy: "write_ints64".} = writeDatas
+proc writeFloat(a: Process, address: ByteAddress, data: float32) {.exportpy: "write_float".} = writeData
+proc writeFloats(a: Process, address: ByteAddress, data: openArray[float32]) {.exportpy: "write_floats".} = writeDatas
+proc writeByte(a: Process, address: ByteAddress, data: byte) {.exportpy: "write_byte".} = writeData
+proc writeBytes(a: Process, address: ByteAddress, data: openArray[byte]) {.exportpy: "write_bytes".} = writeDatas
+proc writeVec2(a: Process, address: ByteAddress, data: Vec2) {.exportpy: "write_vec2".} = writeData
+proc writeVec3(a: Process, address: ByteAddress, data: Vec3) {.exportpy: "write_vec3".} = writeData
+proc writeBool(a: Process, address: ByteAddress, data: bool) {.exportpy: "write_bool".} = a.write(address, data.byte)

@@ -23,7 +23,7 @@ var OverlayWindow: GLFWWindow
   overlay
 ]#
 
-proc overlay_init(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOffset: int32 = 25): Overlay {.exportpy.} =
+proc overlayInit(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOffset: int32 = 25): Overlay {.exportpy: "overlay_init".} =
   var rect: RECT
   assert glfwInit()
 
@@ -70,33 +70,33 @@ proc overlay_init(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOf
   if target != "Fullscreen":
     SetWindowPos(result.hwnd, -1, rect.left, rect.top + borderOffset, 0, 0, 0x0001)
 
-proc overlay_update(a: Overlay) {.exportpy.} =
+proc overlayUpdate(a: Overlay) {.exportpy: "overlay_update".} =
   OverlayWindow.swapBuffers()
   glClear(GL_COLOR_BUFFER_BIT)
   glfwPollEvents()
 
-proc overlay_deinit(a: Overlay) {.exportpy.} =
+proc overlayDeinit(a: Overlay) {.exportpy: "overlay_deinit".} =
   OverlayWindow.destroyWindow()
   glfwTerminate()
 
-proc overlay_close(a: Overlay) {.exportpy.} = 
+proc overlayClose(a: Overlay) {.exportpy: "overlay_close".} = 
   OverlayWindow.setWindowShouldClose(true)
 
-proc overlay_loop(a: Overlay, update: bool = true): bool {.exportpy.} =
+proc overlayloop(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
   if GetAsyncKeyState(a.exitKey).bool:
     a.overlay_close()
   if update:
     a.overlay_update()
   not OverlayWindow.windowShouldClose()
 
-proc overlay_set_pos(a: Overlay, x, y: int32) {.exportpy.} =
+proc overlaySetPos(a: Overlay, x, y: int32) {.exportpy: "overlay_set_pos".} =
   SetWindowPos(a.hwnd, -1, x, y, 0, 0, 0x0001)
 
 #[
   bitmap font rendering
 ]#
 
-proc font_init(height: int32, fontName: string): Font {.exportpy.} =
+proc fontInit(height: int32, fontName: string): Font {.exportpy: "font_init".} =
   result.fontHDC = wglGetCurrentDC()
   if result.fontHDC == 0:
     raise newException(Exception, "Font initialisation without a overlay")
@@ -113,10 +113,10 @@ proc font_init(height: int32, fontName: string): Font {.exportpy.} =
   SelectObject(result.fontHDC, hOldFont)
   discard DeleteObject(hFont)
 
-proc font_deinit(a: Font) {.exportpy.} = 
+proc fontDeinit(a: Font) {.exportpy: "font_deinit".} = 
   glDeleteLists(a.font, 96)
 
-proc font_print(a: Font, x, y: float, text: string, color: array[0..2, float32]) {.exportpy.} =
+proc fontPrint(a: Font, x, y: float, text: string, color: array[0..2, float32]) {.exportpy: "font_print".} =
   glColor3f(color[0], color[1], color[2])
   glWindowPos2f(x, y)
   glPushAttrib(GL_LIST_BIT)
@@ -124,7 +124,7 @@ proc font_print(a: Font, x, y: float, text: string, color: array[0..2, float32])
   glCallLists(cast[int32](text.len), GL_UNSIGNED_BYTE, cast[pointer](text[0].unsafeAddr))
   glPopAttrib()
 
-proc font_print_lines(a: Font, x, y: float, lines: openArray[string], color: array[0..2, float32], offset: float32 = 2) {.exportpy.} =
+proc fontPrintLines(a: Font, x, y: float, lines: openArray[string], color: array[0..2, float32], offset: float32 = 2) {.exportpy: "font_print_lines".} =
   var yPos = y
   glColor3f(color[0], color[1], color[2])
   glPushAttrib(GL_LIST_BIT)
@@ -149,10 +149,10 @@ proc box(x, y, width, height, lineWidth: float, color: array[0..2, float32]) {.e
   glVertex2f(x, y + height)
   glEnd()
 
-proc box_v(pos: Vec2, width, height, lineWidth: float, color: array[0..2, float32]) {.exportpy.} =
+proc boxV(pos: Vec2, width, height, lineWidth: float, color: array[0..2, float32]) {.exportpy: "box_v".} =
   box(pos.x, pos.y, width, height, linewidth, color)
 
-proc alpha_box(x, y, width, height: float, color, outlineColor: array[0..2, float32], alpha: float) {.exportpy.} =
+proc alphaBox(x, y, width, height: float, color, outlineColor: array[0..2, float32], alpha: float) {.exportpy: "alpha_box".} =
   box(x, y, width, height, 1.0, outlineColor)
   glBegin(GL_POLYGON)
   glColor4f(color[0], color[1], color[2], alpha)
@@ -162,10 +162,10 @@ proc alpha_box(x, y, width, height: float, color, outlineColor: array[0..2, floa
   glVertex2f(x, y + height)
   glEnd()
 
-proc alpha_box_v(pos: Vec2, width, height: float, color, outlineColor: array[0..2, float32], alpha: float) {.exportpy.} =
-  alpha_box(pos.x, pos.y, width, height, color, outlineColor, alpha)
+proc alphaBoxV(pos: Vec2, width, height: float, color, outlineColor: array[0..2, float32], alpha: float) {.exportpy: "alpha_box_v".} =
+  alphaBox(pos.x, pos.y, width, height, color, outlineColor, alpha)
 
-proc corner_box(x, y, width, height: float, color, outlineColor: array[0..2, float32], lineWidth: float = 1) {.exportpy.} =
+proc cornerBox(x, y, width, height: float, color, outlineColor: array[0..2, float32], lineWidth: float = 1) {.exportpy: "corner_box".} =
   template drawCorner =
     glBegin(GL_LINES)
     # Lower Left
@@ -196,7 +196,7 @@ proc corner_box(x, y, width, height: float, color, outlineColor: array[0..2, flo
   glColor3f(color[0], color[1], color[2])
   drawCorner()
 
-proc corner_box_v(pos: Vec2, width, height: float, color, outlineColor: array[0..2, float32], lineWidth: float = 1) {.exportpy.} =
+proc cornerBoxV(pos: Vec2, width, height: float, color, outlineColor: array[0..2, float32], lineWidth: float = 1) {.exportpy: "corner_box_v".} =
   corner_box(pos.x, pos.y, width, height, color, outlineColor, lineWidth)
 
 proc line(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32]) {.exportpy.} =
@@ -207,10 +207,10 @@ proc line(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32]) {.expor
   glVertex2f(x2, y2)
   glEnd()
 
-proc line_v(pos1, pos2: Vec2, lineWidth: float, color: array[0..2, float32]) {.exportpy.} =
+proc lineV(pos1, pos2: Vec2, lineWidth: float, color: array[0..2, float32]) {.exportpy: "line_v".} =
   line(pos1.x, pos1.y, pos2.x, pos2.y, lineWidth, color)
 
-proc dashed_line(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32], factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy.} =
+proc dashedLine(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32], factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy: "dashed_line".} =
   glPushAttrib(GL_ENABLE_BIT)
   glLineStipple(factor, fromBin[uint16](pattern))
   glLineWidth(lineWidth)
@@ -223,8 +223,8 @@ proc dashed_line(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32], 
   glEnd()
   glPopAttrib()
 
-proc dashed_line_v(pos1, pos2: Vec2, lineWidth: float, color: array[0..2, float32], factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy.} =
-  dashed_line(pos1.x, pos1.y, pos2.x, pos2.y, lineWidth, color, factor, pattern, alpha)
+proc dashedLineV(pos1, pos2: Vec2, lineWidth: float, color: array[0..2, float32], factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy: "dashed_line_v".} =
+  dashedLine(pos1.x, pos1.y, pos2.x, pos2.y, lineWidth, color, factor, pattern, alpha)
 
 proc circle(x, y, radius: float, color: array[0..2, float32], filled: bool = true) {.exportpy.} =
   if filled: glBegin(GL_POLYGON)
@@ -238,10 +238,10 @@ proc circle(x, y, radius: float, color: array[0..2, float32], filled: bool = tru
     )
   glEnd()
 
-proc circle_v(pos: Vec2, radius: float, color: array[0..2, float32], filled: bool = true) {.exportpy.} =
+proc circleV(pos: Vec2, radius: float, color: array[0..2, float32], filled: bool = true) {.exportpy: "circle_v".} =
   circle(pos.x, pos.y, radius, color, filled)
 
-proc rad_circle(x, y, radius: float, value: int, color: array[0..2, float32]) {.exportpy.} =
+proc radCircle(x, y, radius: float, value: int, color: array[0..2, float32]) {.exportpy: "rad_circle".} =
   glBegin(GL_POLYGON)
   glColor3f(color[0], color[1], color[2])
   for i in 0..value:
@@ -251,10 +251,10 @@ proc rad_circle(x, y, radius: float, value: int, color: array[0..2, float32]) {.
     )
   glEnd()
 
-proc rad_circle_v(pos: Vec2, radius: float, value: int, color: array[0..2, float32]) {.exportpy.} =
-  rad_circle(pos.x, pos.y, radius, value, color)
+proc readCircleV(pos: Vec2, radius: float, value: int, color: array[0..2, float32]) {.exportpy: "rad_circle_v".} =
+  radCircle(pos.x, pos.y, radius, value, color)
 
-proc value_bar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = true) {.exportpy.} =
+proc valueBar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = true) {.exportpy: "value_bar".} =
   if value > maxValue:
     raise newException(Exception, "ValueBar: Max Value > value")
 
@@ -271,10 +271,10 @@ proc value_bar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = t
   else:
     line(x1, y1, barX, y2, width, color)
 
-proc value_bar_v(pos1, pos2: Vec2, width, maxValue, value: float, vertical: bool = true) {.exportpy.} =
-  value_bar(pos1.x, pos1.y, pos2.x, pos2.y, width, maxValue, value, vertical)
+proc valueBarV(pos1, pos2: Vec2, width, maxValue, value: float, vertical: bool = true) {.exportpy: "value_bar_v".} =
+  valueBar(pos1.x, pos1.y, pos2.x, pos2.y, width, maxValue, value, vertical)
 
-proc custom_shape(points: openArray[Vec2], color: array[0..2, float32], filled: bool = true, alpha: float = 1.0) {.exportpy.} =
+proc customShape(points: openArray[Vec2], color: array[0..2, float32], filled: bool = true, alpha: float = 1.0) {.exportpy: "custom_shape".} =
   if filled: glBegin(GL_POLYGON)
   else: glBegin(GL_LINE_LOOP)
   glColor4f(color[0], color[1], color[2], alpha)

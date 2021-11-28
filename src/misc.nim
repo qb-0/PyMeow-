@@ -7,13 +7,13 @@ const cheatsheet = staticRead("../cheatsheet.txt")
 
 pyExportModule("pymeow")
 
-proc key_pressed(vKey: int32): bool {.exportpy.} =
+proc keyPressed(vKey: int32): bool {.exportpy: "key_pressed".} =
   GetAsyncKeyState(vKey).bool
 
-proc set_foreground(winTitle: string): bool {.discardable, exportpy.} = 
+proc setForeground(winTitle: string): bool {.discardable, exportpy: "set_foreground".} = 
   SetForeGroundWindow(FindWindowA(nil, winTitle))
 
-proc mouse_move(a: Overlay, x, y: float32) {.exportpy.} =
+proc mouseMove(a: Overlay, x, y: float32) {.exportpy: "mouse_move".} =
   var input: INPUT
   input.mi = MOUSE_INPUT(
     dwFlags: MOUSEEVENTF_MOVE, 
@@ -22,7 +22,7 @@ proc mouse_move(a: Overlay, x, y: float32) {.exportpy.} =
   )
   SendInput(1, input.addr, sizeof(input).int32)
 
-proc mouse_click {.exportpy.} =
+proc mouseClick {.exportpy: "mouse_click".} =
   var 
     down: INPUT
     release: INPUT
@@ -41,7 +41,7 @@ proc rgb(color: string): array[0..2, float32] {.exportpy.} =
   except:
     [0.float32, 0, 0]
 
-proc wts_ogl(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy.} =
+proc wtsOgl(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy: "wts_ogl".} =
   var 
     clip: Vec3
     ndc: Vec2
@@ -60,7 +60,7 @@ proc wts_ogl(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.expor
   result.x = (a.width / 2 * ndc.x) + (ndc.x + a.width / 2)
   result.y = (a.height / 2 * ndc.y) + (ndc.y + a.height / 2)
 
-proc wts_dx(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy.} =
+proc wtsDx(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy: "wts_dx".} =
   var 
     clip: Vec3
     ndc: Vec2
