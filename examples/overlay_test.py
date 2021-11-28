@@ -12,7 +12,7 @@ def main():
     x, y = overlay["midX"], overlay["midY"]
     speed = 5
     ball_left, ball_down = False, False
-    
+
     frames, fps = 0, 0
     prev_time = time()
 
@@ -36,12 +36,9 @@ def main():
             fps = frames
             frames = 0
             prev_time = curr_time
-        
+
         pm.font_print(
-            font,
-            overlay["midX"] - 100, overlay["midY"],
-            f"FPS: {fps}", 
-            [b, r, g]
+            font, overlay["midX"] - 100, overlay["midY"], f"FPS: {fps}", [b, r, g]
         )
 
         if ball_left:
@@ -88,4 +85,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

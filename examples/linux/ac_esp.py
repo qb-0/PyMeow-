@@ -43,14 +43,12 @@ def main():
                 ent_obj = Entity(ent_addr, mem)
                 if ent_obj.health > 0:
                     try:
-                        ent_obj.pos2d = wts_ogl(
-                            overlay, matrix, ent_obj.pos3d
-                        )
+                        ent_obj.pos2d = wts_ogl(overlay, matrix, ent_obj.pos3d)
                     except:
                         continue
 
                     dashed_line(
-                        overlay["midX"], 
+                        overlay["midX"],
                         overlay["midY"],
                         ent_obj.pos2d["x"] - 10,
                         ent_obj.pos2d["y"],
@@ -72,11 +70,11 @@ def main():
                             ent_obj.name,
                             f"Team: {ent_obj.team}",
                             f"Health: {ent_obj.health}",
-                            f"Distance: {int(vec3_distance(ent_obj.pos3d, local_ent.pos3d))}"
+                            f"Distance: {int(vec3_distance(ent_obj.pos3d, local_ent.pos3d))}",
                         ],
-                        rgb("white")
+                        rgb("white"),
                     )
-    
+
     overlay_deinit(overlay)
 
 

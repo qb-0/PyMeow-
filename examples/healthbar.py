@@ -14,8 +14,10 @@ def main():
         for health in range(max_health, 0, -1):
             # Vertical Healthbar
             value_bar(
-                x, y,
-                x, y + bar_length,
+                x,
+                y,
+                x,
+                y + bar_length,
                 bar_width,
                 max_health,
                 health,
@@ -23,26 +25,22 @@ def main():
 
             # Horizontal Healthbar
             value_bar(
-                x, y - 12,
-                x + bar_length, y - 12,
+                x,
+                y - 12,
+                x + bar_length,
+                y - 12,
                 bar_width,
                 max_health,
                 health,
-                vertical=False
+                vertical=False,
             )
 
-            corner_box(
-                x + 7,
-                y,
-                bar_length - 7,
-                bar_length,
-                rgb("white"), rgb("black")
-            )
+            corner_box(x + 7, y, bar_length - 7, bar_length, rgb("white"), rgb("black"))
 
             sleep(0.001)
 
             overlay_update(overlay)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

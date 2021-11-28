@@ -7,7 +7,7 @@ class Offsets:
     EntityList = 0x346C90
     PlayerCount = 0x346C9C
     ViewMatrix = 0x32D040
-    GameMode = 0x26f6c0
+    GameMode = 0x26F6C0
 
     Health = 0x178
     Armor = 0x180
@@ -22,9 +22,7 @@ class Entity:
         self.addr = addr
 
         self.hpos3d = read_vec3(mem, addr)
-        self.fpos3d = vec3(
-            self.hpos3d["x"], self.hpos3d["y"], self.hpos3d["z"] - 15
-        )
+        self.fpos3d = vec3(self.hpos3d["x"], self.hpos3d["y"], self.hpos3d["z"] - 15)
         self.health = read_int(mem, addr + Offsets.Health)
         self.armor = read_int(mem, addr + Offsets.Armor)
         self.team = read_string(mem, addr + Offsets.Team)
@@ -45,14 +43,33 @@ except Exception as e:
 
 
 def is_team_game():
-    return read_byte(mem, base + Offsets.GameMode) in \
-        [2, 4, 6, 8, 10, 11, 12, 17, 13, 14, 18, 15, 16, 19, 20, 21, 22]
+    return read_byte(mem, base + Offsets.GameMode) in [
+        2,
+        4,
+        6,
+        8,
+        10,
+        11,
+        12,
+        17,
+        13,
+        14,
+        18,
+        15,
+        16,
+        19,
+        20,
+        21,
+        22,
+    ]
 
 
 def get_ents():
     player_count = read_int(mem, base + Offsets.PlayerCount)
     if player_count > 1:
-        ent_buffer = read_ints64(mem, read_int64(mem, base + Offsets.EntityList), player_count)
+        ent_buffer = read_ints64(
+            mem, read_int64(mem, base + Offsets.EntityList), player_count
+        )
 
         try:
             global local
@@ -114,21 +131,22 @@ def main():
                 e.fpos2d["x"] - center - 5,
                 e.hpos2d["y"],
                 2,
-                150, e.health
+                150,
+                e.health,
             )
             font_print(
                 font,
-                e.hpos2d["x"] - (len(e.name) * 2.5) ,
+                e.hpos2d["x"] - (len(e.name) * 2.5),
                 e.hpos2d["y"] + 10,
                 e.name,
-                rgb("white")
+                rgb("white"),
             )
             font_print(
                 font,
                 e.fpos2d["x"] - 8,
                 e.fpos2d["y"] - 10,
                 str(e.distance),
-                rgb("white")
+                rgb("white"),
             )
             dashed_line(
                 overlay["midX"],

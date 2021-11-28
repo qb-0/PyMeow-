@@ -67,7 +67,9 @@ def trigger_bot(mem, local, ent):
 def main():
     try:
         # Credits to https://github.com/frk1/hazedumper
-        haze = get("https://raw.githubusercontent.com/frk1/hazedumper/master/csgo.json").json()
+        haze = get(
+            "https://raw.githubusercontent.com/frk1/hazedumper/master/csgo.json"
+        ).json()
 
         [setattr(Offsets, k, v) for k, v in haze["signatures"].items()]
         [setattr(Offsets, k, v) for k, v in haze["netvars"].items()]
@@ -76,7 +78,7 @@ def main():
 
     csgo_proc = process_by_name("csgo.exe")
     game_module = csgo_proc["modules"]["client.dll"]["baseaddr"]
-    overlay = overlay_init() # Windowed Fullscreen
+    overlay = overlay_init()  # Windowed Fullscreen
     font = font_init(10, "Tahoma")
     set_foreground("Counter-Strike: Global Offensive")
 
@@ -89,7 +91,9 @@ def main():
             continue
 
         if local_player_addr:
-            ent_addrs = read_ints(csgo_proc, game_module + Offsets.dwEntityList, 128)[0::4]
+            ent_addrs = read_ints(csgo_proc, game_module + Offsets.dwEntityList, 128)[
+                0::4
+            ]
             view_matrix = read_floats(csgo_proc, game_module + Offsets.dwViewMatrix, 16)
             for ent_addr in ent_addrs:
                 if ent_addr > 0 and ent_addr != local_player_addr:
@@ -118,7 +122,8 @@ def main():
                                 ent.wts["x"] + center - 5,
                                 head_pos["y"] + 5,
                                 2,
-                                100, ent.health
+                                100,
+                                ent.health,
                             )
                             font_print(
                                 font,
@@ -145,7 +150,7 @@ def main():
                             trigger_bot(csgo_proc, local_ent, ent)
                         except:
                             pass
-    
+
     overlay_deinit(overlay)
 
 

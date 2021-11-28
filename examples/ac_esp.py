@@ -2,6 +2,7 @@ from pymeow import *
 
 DEBUG = False
 
+
 class Pointer:
     player_count = 0x0050F500
     entity_list = 0x0050F4F8
@@ -52,7 +53,9 @@ def main():
             except:
                 continue
 
-            ent_buffer = read_ints(mem, read_int(mem, Pointer.entity_list), player_count)[1:]
+            ent_buffer = read_ints(
+                mem, read_int(mem, Pointer.entity_list), player_count
+            )[1:]
             for addr in ent_buffer:
                 try:
                     ent_obj = Entity(addr, mem)
@@ -68,7 +71,7 @@ def main():
                         ent_obj.info["pos2d"]["y"],
                         3,
                         rgb("blue") if ent_obj.info["team"] == 1 else rgb("red"),
-                        False
+                        False,
                     )
                     font_print_lines(
                         font,
@@ -79,9 +82,9 @@ def main():
                             f"Team: {ent_obj.info['team']}",
                             f"Health: {ent_obj.info['hp']}",
                             f"Armor:  {ent_obj.info['armor']}",
-                            f"Distance:  {int(vec3_distance(ent_obj.info['pos3d'], local_ent.info['pos3d']))}"
+                            f"Distance:  {int(vec3_distance(ent_obj.info['pos3d'], local_ent.info['pos3d']))}",
                         ],
-                        rgb("white")
+                        rgb("white"),
                     )
 
     overlay_deinit(overlay)
