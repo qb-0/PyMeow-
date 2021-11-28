@@ -238,6 +238,20 @@ proc renderString*(x, y: float, text: string, color: array[0..2, float32], align
   for c in text:
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
 
+proc renderStringLines(x, y: float, lines: openArray[string], color: array[0..2, float32], align: bool = false, offset: float = 2) {.exportpy: "render_string_lines".} =
+  glColor3f(color[0], color[1], color[2])
+  var yPos = y
+
+  for l in lines:
+    if align:
+      glRasterPos2f(x - (glutBitmapLength(GLUT_BITMAP_HELVETICA_12, l.cstring).float / 2), yPos)
+    else:
+      glRasterPos2f(x, yPos)
+
+    yPos -= offset
+    for c in l:
+      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
+
 #[
   world to screen
 ]#
