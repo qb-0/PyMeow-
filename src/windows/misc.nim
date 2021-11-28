@@ -1,7 +1,7 @@
 import
   os, colors,
   nimpy, winim,
-  overlay, vector
+  overlay, ../vector
 
 const cheatsheet = staticRead("../../cheatsheet.txt")
 

@@ -1,7 +1,7 @@
 import
   strutils, math, 
   nimpy, winim, nimgl/[glfw, glfw/native, opengl],
-  vector
+  ../vector
 from strformat import fmt
 
 pyExportModule("pymeow")

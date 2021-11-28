@@ -1,7 +1,7 @@
 import 
   os, tables, strformat, 
   strutils, sequtils, posix,
-  regex, nimpy, vector
+  regex, nimpy, ../vector
 
 pyExportModule("pymeow")
 
@@ -107,7 +107,7 @@ proc processByName*(name: string): Process {.exportpy: "process_by_name"} =
 proc processByPid*(pid: int): Process {.exportpy: "process_by_pid".} =
   if getuid() != 0:
     raise newException(IOError, "Root required!")
-  
+
   try:
     result.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
     result.pid = pid

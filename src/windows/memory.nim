@@ -1,7 +1,7 @@
 import 
   os, tables, strutils,
   winim, nimpy, regex,
-  vector
+  ../vector
 from strformat import fmt
 
 pyExportModule("pymeow")
