@@ -15,6 +15,8 @@ when defined(windows):
 when defined(linux):
   import src/linux/[
     memory,
+    misc,
+    overlay,
   ]
 
 {. warning[UnusedImport]:off .}

@@ -1,7 +1,7 @@
 import 
   strutils, math, colors, osproc,
   nimgl/[glfw, opengl], opengl/glut,
-  nimpy, misc
+  nimpy, misc, x11/keysym, ../vector
 
 pyExportModule("pymeow")
 
@@ -9,12 +9,13 @@ type
   Overlay* = object
     width*, height*, midX*, midY*: int32
     x*, y*: int32
-    videoMode*: ptr GLFWVidMode
-    window*: GLFWWindow
     exitKey*: culong
 
   WinInfo = tuple
     x, y, width, height: int32
+
+
+var OverlayWindow: GLFWWindow
 
 #[
   overlay
@@ -51,12 +52,12 @@ proc overlayInit*(name: string = "Overlay", target: string = "Fullscreen", exitK
   glfwWindowHint(GLFWSamples, 10)
   glfwWindowHint(GLFWMouseButtonPassthrough, GLFWTrue)
 
-  result.videoMode = getVideoMode(glfwGetPrimaryMonitor())
+  let videoMode = getVideoMode(glfwGetPrimaryMonitor())
   if target == "Fullscreen":
-    result.width = result.videoMode.width - 1
-    result.height = result.videoMode.height - 1
-    result.midX = result.videoMode.width div 2
-    result.midY = result.videoMode.height div 2
+    result.width = videoMode.width - 1
+    result.height = videoMode.height - 1
+    result.midX = videoMode.width div 2
+    result.midY = videoMode.height div 2
     result.x = 0
     result.y = 0
   else:
@@ -69,8 +70,8 @@ proc overlayInit*(name: string = "Overlay", target: string = "Fullscreen", exitK
     result.midY = result.height div 2
 
   result.exitKey = exitKey
-  result.window = glfwCreateWindow(result.width.int32, result.height.int32, name, icon=false)
-  result.window.makeContextCurrent()
+  OverlayWindow = glfwCreateWindow(result.width.int32, result.height.int32, name, icon=false)
+  OverlayWindow.makeContextCurrent()
   glfwSwapInterval(1)
   
   assert glInit()
@@ -85,26 +86,26 @@ proc overlayInit*(name: string = "Overlay", target: string = "Fullscreen", exitK
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
   if target != "Fullscreen":
-    result.window.setWindowPos(wInfo.x, wInfo.y)
+    OverlayWindow.setWindowPos(wInfo.x, wInfo.y)
 
-proc update*(self: Overlay) {.exportpy: "overlay_update".} =
-  self.window.swapBuffers()
+proc update*(a: Overlay) {.exportpy: "overlay_update".} =
+  OverlayWindow.swapBuffers()
   glfwPollEvents()
   glClear(GL_COLOR_BUFFER_BIT)
 
-proc deinit*(self: Overlay) {.exportpy: "overlay_deinit".} =
-  self.window.destroyWindow()
+proc deinit*(a: Overlay) {.exportpy: "overlay_deinit".} =
+  OverlayWindow.destroyWindow()
   glfwTerminate()
 
-proc close*(self: Overlay) {.exportpy: "overlay_close".} = 
-  self.window.setWindowShouldClose(true) 
+proc close*(a: Overlay) {.exportpy: "overlay_close".} = 
+  OverlayWindow.setWindowShouldClose(true) 
 
-proc loop*(self: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
+proc loop*(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
   if update: 
-    self.update()
-  if keyPressed(self.exitKey): 
-    self.close()
-  not self.window.windowShouldClose()
+    a.update()
+  if keyPressed(a.exitKey): 
+    a.close()
+  not OverlayWindow.windowShouldClose()
 
 #[
   2d drawings
@@ -236,3 +237,41 @@ proc renderString*(x, y: float, text: string, color: array[0..2, float32], align
 
   for c in text:
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
+
+proc wtsOgl(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy: "wts_ogl".} =
+  var 
+    clip: Vec3
+    ndc: Vec2
+
+  # z = w
+  clip.z = pos.x * matrix[3] + pos.y * matrix[7] + pos.z * matrix[11] + matrix[15]
+  if clip.z < 0.2:
+    raise newException(Exception, "WTS")
+
+  clip.x = pos.x * matrix[0] + pos.y * matrix[4] + pos.z * matrix[8] + matrix[12]
+  clip.y = pos.x * matrix[1] + pos.y * matrix[5] + pos.z * matrix[9] + matrix[13]
+
+  ndc.x = clip.x / clip.z
+  ndc.y = clip.y / clip.z
+
+  result.x = (a.width / 2 * ndc.x) + (ndc.x + a.width / 2)
+  result.y = (a.height / 2 * ndc.y) + (ndc.y + a.height / 2)
+
+proc wtsDx(a: Overlay, matrix: array[0..15, float32], pos: Vec3): Vec2 {.exportpy: "wts_dx".} =
+  var 
+    clip: Vec3
+    ndc: Vec2
+
+  # z = w
+  clip.z = pos.x * matrix[12] + pos.y * matrix[13] + pos.z * matrix[14] + matrix[15]
+  if clip.z < 0.2:
+    raise newException(Exception, "WTS")
+
+  clip.x = pos.x * matrix[0] + pos.y * matrix[1] + pos.z * matrix[2] + matrix[3]
+  clip.y = pos.x * matrix[4] + pos.y * matrix[5] + pos.z * matrix[6] + matrix[7]
+
+  ndc.x = clip.x / clip.z
+  ndc.y = clip.y / clip.z
+
+  result.x = (a.width / 2 * ndc.x) + (ndc.x + a.width / 2)
+  result.y = (a.height / 2 * ndc.y) + (ndc.y + a.height / 2)
