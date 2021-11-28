@@ -29,7 +29,7 @@ class Entity:
 def main():
     mem = process_by_name("linux_64_client")
     base = mem["baseAddr"]
-    overlay = overlay_init("Assault Cube ESP", "AssaultCube")
+    overlay = overlay_init("AssaultCube")
     entity_list = read_int(mem, base + Pointer.entity_list)
 
     while overlay_loop(overlay):

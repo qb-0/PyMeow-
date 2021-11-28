@@ -51,7 +51,7 @@ proc overlayInit(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOff
     result.midX = result.width / 2
     result.midY = result.height / 2
 
-  OverlayWindow = glfwCreateWindow(result.width.int32 - 1, result.height.int32 - 1, "Meow", icon=false)
+  OverlayWindow = glfwCreateWindow(result.width.int32 - 1, result.height.int32 - 1, "PyMeow", icon=false)
   OverlayWindow.setInputMode(GLFWCursorSpecial, GLFWCursorDisabled)
   OverlayWindow.makeContextCurrent()
   glfwSwapInterval(0)

@@ -41,7 +41,7 @@ proc getWindowInfo(name: string): WinInfo =
   else:
     raise newException(IOError, "XWinInfo failed")
 
-proc overlayInit*(name: string = "Overlay", target: string = "Fullscreen", exitKey: culong = XK_End): Overlay {.exportpy: "overlay_init".} =
+proc overlayInit*(target: string = "Fullscreen", exitKey: culong = XK_End): Overlay {.exportpy: "overlay_init".} =
   var wInfo: WinInfo
   assert glfwInit()
 
@@ -70,7 +70,7 @@ proc overlayInit*(name: string = "Overlay", target: string = "Fullscreen", exitK
     result.midY = result.height div 2
 
   result.exitKey = exitKey
-  OverlayWindow = glfwCreateWindow(result.width.int32, result.height.int32, name, icon=false)
+  OverlayWindow = glfwCreateWindow(result.width.int32, result.height.int32, "PyMeow", icon=false)
   OverlayWindow.makeContextCurrent()
   glfwSwapInterval(1)
   
