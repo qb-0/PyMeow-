@@ -52,15 +52,15 @@ def main():
                         overlay["midY"],
                         ent_obj.pos2d["x"] - 10,
                         ent_obj.pos2d["y"],
-                        2,
-                        rgb("blue") if ent_obj.team == 1 else rgb("red"),
+                        1.5,
+                        rgb("cyan") if ent_obj.team == 1 else rgb("red"),
                     )
 
                     circle(
                         ent_obj.pos2d["x"] - 10,
                         ent_obj.pos2d["y"],
                         3,
-                        rgb("blue") if ent_obj.team == 1 else rgb("red"),
+                        rgb("cyan") if ent_obj.team == 1 else rgb("red"),
                     )
 
                     render_string_lines(
