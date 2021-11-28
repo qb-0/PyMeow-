@@ -238,7 +238,7 @@ proc renderString*(x, y: float, text: string, color: array[0..2, float32], align
   for c in text:
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
 
-proc renderStringLines(x, y: float, lines: openArray[string], color: array[0..2, float32], align: bool = false, offset: float = 2) {.exportpy: "render_string_lines".} =
+proc renderStringLines(x, y: float, lines: openArray[string], color: array[0..2, float32], align: bool = false, offset: float = 12) {.exportpy: "render_string_lines".} =
   glColor3f(color[0], color[1], color[2])
   var yPos = y
 
