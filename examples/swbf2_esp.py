@@ -36,7 +36,7 @@ except Exception as e:
 def wts(pos, vm):
     w = vm[3] * pos["x"] + vm[7] * pos["y"] + vm[11] * pos["z"] + vm[15]
     if w < 0.3:
-        raise Exception("WTS")
+        return False
 
     x = vm[0] * pos["x"] + vm[4] * pos["y"] + vm[8] * pos["z"] + vm[12]
     y = vm[1] * pos["x"] + vm[5] * pos["y"] + vm[9] * pos["z"] + vm[13]
@@ -118,25 +118,22 @@ def main():
                     continue
 
                 vm = read_floats(mem, render_view + Offsets.ViewProj, 16)
+                ent.pos2d = wts(ent.pos3d, vm)
+                ent.headpos2d = wts(ent.headpos3d, vm)
 
-                try:
-                    ent.pos2d = wts(ent.pos3d, vm)
-                    ent.headpos2d = wts(ent.headpos3d, vm)
-                except:
-                    continue
-
-                head = ent.headpos2d["y"] - ent.pos2d["y"]
-                width = head / 2
-                center = width / -2
-                alpha_box(
-                    ent.pos2d["x"] + center,
-                    ent.pos2d["y"],
-                    width,
-                    head + 5,
-                    rgb("green") if ent.visible else rgb("red"),
-                    rgb("black"),
-                    0.15,
-                )
+                if ent.pos2d and ent.headpos2d:
+                    head = ent.headpos2d["y"] - ent.pos2d["y"]
+                    width = head / 2
+                    center = width / -2
+                    alpha_box(
+                        ent.pos2d["x"] + center,
+                        ent.pos2d["y"],
+                        width,
+                        head + 5,
+                        rgb("green") if ent.visible else rgb("red"),
+                        rgb("black"),
+                        0.15,
+                    )
 
     overlay_deinit(overlay)
 
