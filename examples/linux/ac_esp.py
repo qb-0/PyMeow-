@@ -57,6 +57,7 @@ class Entity:
             self.color,
         )
 
+
 def main():
     mem = process_by_name("linux_64_client")
     base = mem["baseAddr"]
