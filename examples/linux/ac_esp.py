@@ -23,8 +23,39 @@ class Entity:
         self.health = read_int(self.mem, self.addr + Offsets.health)
         self.team = read_int(self.mem, self.addr + Offsets.team)
         self.pos3d = read_vec3(self.mem, self.addr + Offsets.pos)
+        self.color = rgb("cyan") if self.team == 1 else rgb("red")
         self.pos2d = None
 
+    def render_info(self, local):
+        render_string_lines(
+            self.pos2d["x"],
+            self.pos2d["y"],
+            [
+                self.name,
+                f"Team: {self.team}",
+                f"Health: {self.health}",
+                f"Distance: {int(vec3_distance(self.pos3d, local.pos3d))}",
+            ],
+            rgb("white"),
+        )
+
+    def render_snapline(self, overlay):
+        dashed_line(
+            overlay["midX"],
+            overlay["midY"],
+            self.pos2d["x"] - 10,
+            self.pos2d["y"],
+            1.5,
+            self.color
+        )
+
+    def render_circle(self):
+        circle(
+            self.pos2d["x"] - 10,
+            self.pos2d["y"],
+            3,
+            self.color,
+        )
 
 def main():
     mem = process_by_name("linux_64_client")
@@ -47,33 +78,9 @@ def main():
                     except:
                         continue
 
-                    dashed_line(
-                        overlay["midX"],
-                        overlay["midY"],
-                        ent_obj.pos2d["x"] - 10,
-                        ent_obj.pos2d["y"],
-                        1.5,
-                        rgb("cyan") if ent_obj.team == 1 else rgb("red"),
-                    )
-
-                    circle(
-                        ent_obj.pos2d["x"] - 10,
-                        ent_obj.pos2d["y"],
-                        3,
-                        rgb("cyan") if ent_obj.team == 1 else rgb("red"),
-                    )
-
-                    render_string_lines(
-                        ent_obj.pos2d["x"],
-                        ent_obj.pos2d["y"],
-                        [
-                            ent_obj.name,
-                            f"Team: {ent_obj.team}",
-                            f"Health: {ent_obj.health}",
-                            f"Distance: {int(vec3_distance(ent_obj.pos3d, local_ent.pos3d))}",
-                        ],
-                        rgb("white"),
-                    )
+                    ent_obj.render_snapline(overlay)
+                    ent_obj.render_info(local_ent)
+                    ent_obj.render_circle()
 
     overlay_deinit(overlay)
 

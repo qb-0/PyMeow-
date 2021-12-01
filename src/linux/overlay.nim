@@ -14,6 +14,8 @@ type
   WinInfo = tuple
     x, y, width, height: int32
 
+  Rgb = array[0..2, float32]
+
 
 var OverlayWindow: GLFWWindow
 
@@ -111,7 +113,7 @@ proc loop*(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
   2d shapes
 ]#
 
-proc box*(x, y, width, height, lineWidth: float, color: array[0..2, float32]) {.exportpy.} =
+proc box*(x, y, width, height, lineWidth: float, color: Rgb) {.exportpy.} =
   glLineWidth(lineWidth)
   glBegin(GL_LINE_LOOP)
   glColor3f(color[0], color[1], color[2])
@@ -121,7 +123,7 @@ proc box*(x, y, width, height, lineWidth: float, color: array[0..2, float32]) {.
   glVertex2f(x, y + height)
   glEnd()
 
-proc alphaBox*(x, y, width, height: float, color, outlineColor: array[0..2, float32], alpha: float) {.exportpy: "alpha_box".} =
+proc alphaBox*(x, y, width, height: float, color, outlineColor: Rgb, alpha: float) {.exportpy: "alpha_box".} =
   box(x, y, width, height, 1.0, outlineColor)
   glEnable(GL_BLEND)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -134,7 +136,7 @@ proc alphaBox*(x, y, width, height: float, color, outlineColor: array[0..2, floa
   glEnd()
   glDisable(GL_BLEND)
 
-proc cornerBox*(x, y, width, height: float, color, outlineColor: array[0..2, float32], lineWidth: float = 1) {.exportpy: "corner_box".} =
+proc cornerBox*(x, y, width, height: float, color, outlineColor: Rgb, lineWidth: float = 1) {.exportpy: "corner_box".} =
   template drawCorner =
     glBegin(GL_LINES)
     # Lower Left
@@ -165,7 +167,7 @@ proc cornerBox*(x, y, width, height: float, color, outlineColor: array[0..2, flo
   glColor3f(color[0], color[1], color[2])
   drawCorner()
 
-proc line*(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32]) {.exportpy.} =
+proc line*(x1, y1, x2, y2, lineWidth: float, color: Rgb) {.exportpy.} =
   glLineWidth(lineWidth)
   glBegin(GL_LINES)
   glColor3f(color[0], color[1], color[2])
@@ -173,7 +175,7 @@ proc line*(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32]) {.expo
   glVertex2f(x2, y2)
   glEnd()
 
-proc dashedLine*(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32], factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy: "dashed_line".} =
+proc dashedLine*(x1, y1, x2, y2, lineWidth: float, color: Rgb, factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy: "dashed_line".} =
   glPushAttrib(GL_ENABLE_BIT)
   glLineStipple(factor, fromBin[uint16](pattern))
   glLineWidth(lineWidth)
@@ -188,7 +190,7 @@ proc dashedLine*(x1, y1, x2, y2, lineWidth: float, color: array[0..2, float32], 
   glEnd()
   glPopAttrib()
 
-proc circle*(x, y, radius: float, color: array[0..2, float32], filled: bool = true) {.exportpy.} =
+proc circle*(x, y, radius: float, color: Rgb, filled: bool = true) {.exportpy.} =
   if filled: glBegin(GL_POLYGON)
   else: glBegin(GL_LINE_LOOP)
 
@@ -200,7 +202,7 @@ proc circle*(x, y, radius: float, color: array[0..2, float32], filled: bool = tr
     )
   glEnd()
 
-proc radCircle*(x, y, radius: float, value: int, color: array[0..2, float32]) {.exportpy: "rad_circle".} =
+proc radCircle*(x, y, radius: float, value: int, color: Rgb) {.exportpy: "rad_circle".} =
   glBegin(GL_POLYGON)
   glColor3f(color[0], color[1], color[2])
   for i in 0..value:
@@ -227,7 +229,7 @@ proc valueBar*(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = t
   else:
     line(x1, y1, barX, y2, width, color)
 
-proc renderString*(x, y: float, text: string, color: array[0..2, float32], align: bool = false) {.exportpy: "render_string".} =
+proc renderString*(x, y: float, text: string, color: Rgb, align: bool = false) {.exportpy: "render_string".} =
   glColor3f(color[0], color[1], color[2])
 
   if align:
@@ -238,7 +240,7 @@ proc renderString*(x, y: float, text: string, color: array[0..2, float32], align
   for c in text:
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
 
-proc renderStringLines(x, y: float, lines: openArray[string], color: array[0..2, float32], align: bool = false, offset: float = 12) {.exportpy: "render_string_lines".} =
+proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align: bool = false, offset: float = 12) {.exportpy: "render_string_lines".} =
   glColor3f(color[0], color[1], color[2])
   var yPos = y
 

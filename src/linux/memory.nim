@@ -134,6 +134,11 @@ proc nopCode*(a: Process, address: ByteAddress, length: int = 1) {.exportpy: "no
   for i in 0..length-1:
     a.write(address + i, 0x90.byte)
 
+proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): ByteAddress {.exportpy: "pointer_chain".} =
+  result = a.read(baseAddr, ByteAddress)
+  for o in offsets:
+    result = a.read(result + o, ByteAddress)
+
 proc readInt(a: Process, address: ByteAddress): int32 {.exportpy: "read_int".} = a.read(address, int32)
 proc readInts(a: Process, address: ByteAddress, size: int32): seq[int32] {.exportpy: "read_ints".} = a.readSeq(address, size, int32)
 proc readInt16(a: Process, address: ByteAddress): int16 {.exportpy: "read_int16".} = a.read(address, int16)

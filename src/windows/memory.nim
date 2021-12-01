@@ -55,7 +55,7 @@ proc processByPid(pid: int32, debug: bool = false, rights: int32 = 0x1F0FFF): Pr
     raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
 
 proc processByName(name: string, debug: bool = false, rights: int32 = 0x1F0FFF): Process {.exportpy: "process_by_name".} =
-  var 
+  var
     pidArray = newSeq[int32](2048)
     read: int32
 
@@ -81,7 +81,7 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
 
   for i in 0..<read div 4:
     var p = pidInfo(pidArray[i])
-    if p.pid != 0: 
+    if p.pid != 0:
       yield p
 
 proc waitForProcess(name: string, interval: int = 1500, debug: bool = false): Process {.exportpy: "wait_for_process".} =
