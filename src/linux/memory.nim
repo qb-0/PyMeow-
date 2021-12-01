@@ -116,6 +116,22 @@ proc processByPid*(pid: int): Process {.exportpy: "process_by_pid".} =
   except IOError:
     raise newException(IOError, fmt"Pid ({pid}) does not exist")
 
+iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
+  if getuid() != 0:
+    raise newException(IOError, "Root required!")
+  
+  let allFiles = toSeq(walkDir("/proc", relative = true))
+  for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
+    try:
+      var r: Process
+      r.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
+      r.pid = pid
+      r.modules = getModules(pid)
+      r.baseAddr = r.modules[r.name].baseAddr
+      yield r
+    except:
+      continue
+
 proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.exportpy: "aob_scan".} =
   var 
     curAddr = module.baseAddr
