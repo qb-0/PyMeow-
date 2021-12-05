@@ -140,11 +140,11 @@ proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.export
     )
 
   for r in module.regions:
-    curAddr += r.size
     let byteString = cast[string](a.readSeq(r.s, r.size)).toHex()
     let b = byteString.findAllBounds(rePattern)
     if b.len != 0:
       return b[0].a div 2 + curAddr
+    curAddr += r.size
 
 proc nopCode*(a: Process, address: ByteAddress, length: int = 1) {.exportpy: "nop_code".} =
   for i in 0..length-1:
