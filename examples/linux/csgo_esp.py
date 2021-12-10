@@ -73,7 +73,7 @@ class Entity:
             self.pos2D["y"] - 12,
             f"Health: {self.health}",
             rgb("white"),
-            True
+            True,
         )
 
         value_bar(

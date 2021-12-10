@@ -229,30 +229,51 @@ proc valueBar*(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = t
   else:
     line(x1, y1, barX, y2, width, color)
 
-proc renderString*(x, y: float, text: string, color: Rgb, align: bool = false) {.exportpy: "render_string".} =
+template getFontPtr: pointer =
+  case font
+  of 0:
+    GLUT_BITMAP_9_BY_15
+  of 1:
+    GLUT_BITMAP_8_BY_13
+  of 2:
+    GLUT_BITMAP_TIMES_ROMAN_10
+  of 3:
+    GLUT_BITMAP_TIMES_ROMAN_24
+  of 4:
+    GLUT_BITMAP_HELVETICA_10
+  of 5:
+    GLUT_BITMAP_HELVETICA_12
+  of 6:
+    GLUT_BITMAP_HELVETICA_18
+  else:
+    raise newException(IOError, "Font value out of range")
+
+proc renderString*(x, y: float, text: string, color: Rgb, align: bool = false, font: int = 5) {.exportpy: "render_string".} =
+  let f = getFontPtr()
   glColor3f(color[0], color[1], color[2])
 
   if align:
-    glRasterPos2f(x - (glutBitmapLength(GLUT_BITMAP_HELVETICA_12, text).float / 2), y)
+    glRasterPos2f(x - (glutBitmapLength(f, text).float / 2), y)
   else:
     glRasterPos2f(x, y)
 
   for c in text:
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
+    glutBitmapCharacter(f, ord(c))
 
-proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align: bool = false, offset: float = 12) {.exportpy: "render_string_lines".} =
+proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align: bool = false, font: int = 5, offset: float = 12) {.exportpy: "render_string_lines".} =
+  let f = getFontPtr()
   glColor3f(color[0], color[1], color[2])
   var yPos = y
 
   for l in lines:
     if align:
-      glRasterPos2f(x - (glutBitmapLength(GLUT_BITMAP_HELVETICA_12, l.cstring).float / 2), yPos)
+      glRasterPos2f(x - (glutBitmapLength(f, l.cstring).float / 2), yPos)
     else:
       glRasterPos2f(x, yPos)
 
     yPos -= offset
     for c in l:
-      glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(c))
+      glutBitmapCharacter(f, ord(c))
 
 #[
   world to screen
