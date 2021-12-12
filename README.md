@@ -10,7 +10,8 @@
 
 ##### <ins>Compiling</ins>
 - Download and install [nim](https://nim-lang.org/install.html) and [git for windows](https://gitforwindows.org/)
-- Install external dependencies: `nimble -y install winim nimgl nimpy regex`
+- (Windows) Install external dependencies: `nimble -y install winim nimgl nimpy regex`
+- (Linux) Install external dependencies: `nimble -y install x11 nimgl nimpy regex`
 - Clone and Compile: `git clone https://github.com/qb-0/PyMeow && cd PyMeow && nim c pymeow`
 
 ##### <ins>Linux</ins>
