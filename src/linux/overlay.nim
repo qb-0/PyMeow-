@@ -275,6 +275,14 @@ proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align:
     for c in l:
       glutBitmapCharacter(f, ord(c))
 
+proc customShape(points: openArray[Vec2], color: Rgb, filled: bool = true, alpha: float = 1.0) {.exportpy: "custom_shape".} =
+  if filled: glBegin(GL_POLYGON)
+  else: glBegin(GL_LINE_LOOP)
+  glColor4f(color[0], color[1], color[2], alpha)
+  for p in points:
+    glVertex2f(p.x, p.y)
+  glEnd()
+
 #[
   world to screen
 ]#
