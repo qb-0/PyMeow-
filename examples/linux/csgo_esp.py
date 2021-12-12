@@ -2,9 +2,9 @@ from pymeow import *
 
 
 class Offsets:
-    dwLocalPlayer = 0x22B35F0
-    dwEntityList = 0x22E3A48
-    dwViewMatrix = 0x22B7A64
+    dwLocalPlayer = 0x22cb650
+    dwEntityList = 0x22fbaa8
+    dwViewMatrix = 0x22cfac4
 
     m_nForceBone = 0x2C54
     m_vecOrigin = 0x170
