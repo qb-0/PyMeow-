@@ -62,7 +62,7 @@ proc write*(a: Process, address: ByteAddress, data: auto): int {.discardable.} =
   iodst.iov_len = size
   process_vm_writev(a.pid, iosrc.addr, 1, iodst.addr, 1, 0)
 
-proc writeArray[T](a: Process, address: ByteAddress, data: openArray[T]) =
+proc writeArray[T](a: Process, address: ByteAddress, data: openArray[T]): int {.discardable.} =
   var
     iosrc, iodst: IOVec
     size = (sizeof(T) * data.len).uint
