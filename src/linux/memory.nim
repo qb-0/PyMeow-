@@ -119,7 +119,7 @@ proc processByPid*(pid: int): Process {.exportpy: "process_by_pid".} =
 iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
   if getuid() != 0:
     raise newException(IOError, "Root required!")
-  
+
   let allFiles = toSeq(walkDir("/proc", relative = true))
   for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
     try:
