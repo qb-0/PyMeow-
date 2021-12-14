@@ -1,4 +1,4 @@
-v1.4
+v1.5 - Windows
 
 ################################################################################################################
 Memory
@@ -43,7 +43,7 @@ write_vec3(Process, address: int, data: Vec3)
 write_bool(Process, address: int, data: bool)
 
 pointer_chain(Process, baseAddr: int, offsets: array) -> int
-aob_scan(Process, pattern: string, module: Process["modules"]["moduleName"] -> int
+aob_scan(Process, pattern: string, module: Process["modules"]["moduleName"]) -> int
 nop_code(Process, address: int, length: int)
 patch_bytes(Process, address: int, data: byte array)
 inject_dll(Process, dllPath: string)
