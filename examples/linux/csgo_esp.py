@@ -13,6 +13,13 @@ class Offsets:
     m_iTeamNum = 0x12C
 
 
+class Colors:
+    orange = rgb("orange")
+    cyan = rgb("cyan")
+    black = rgb("black")
+    white = rgb("white")
+
+
 class Entity:
     def __init__(self, mem, addr, base, vm, ov):
         self.mem = mem
@@ -46,7 +53,7 @@ class Entity:
             self.head_pos2D = wts_dx(self.ov, self.vm, self.head_pos3D)
         except:
             return False
-        self.color = rgb("orange") if self.team == 2 else rgb("cyan")
+        self.color = Colors.orange if self.team == 2 else Colors.cyan
         return True
 
     def render_box(self):
@@ -60,7 +67,7 @@ class Entity:
             width,
             head + 5,
             self.color,
-            rgb("black")
+            Colors.black
         )
 
     def render_health(self):
@@ -72,7 +79,7 @@ class Entity:
             self.pos2D["x"],
             self.pos2D["y"] - 12,
             f"Health: {self.health}",
-            rgb("white"),
+            Colors.white,
             True,
         )
 
@@ -84,6 +91,17 @@ class Entity:
             2,
             100,
             self.health,
+        )
+
+    def render_snapline(self):
+        dashed_line(
+            self.ov["midX"],
+            self.ov["height"],
+            self.head_pos2D["x"],
+            self.head_pos2D["y"],
+            1,
+            self.color,
+            pattern="10101000111"
         )
 
 
@@ -105,6 +123,7 @@ def main():
                     if ent.update():
                         ent.render_box()
                         ent.render_health()
+                        ent.render_snapline()
 
     overlay_deinit(overlay)
 
