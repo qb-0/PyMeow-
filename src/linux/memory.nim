@@ -136,7 +136,7 @@ proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.export
   var 
     curAddr = module.baseAddr
     rePattern = re(
-      pattern.toUpper().multiReplace((" ", ""), ("??", "?"), ("?", ".."), ("*", ".."))
+      pattern.toUpper().multiReplace((" ", ""), ("?", "."), ("*", "."))
     )
 
   for r in module.regions:
