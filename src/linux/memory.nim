@@ -163,6 +163,8 @@ proc readInt64(a: Process, address: ByteAddress): int64 {.exportpy: "read_int64"
 proc readInts64(a: Process, address: ByteAddress, size: int32): seq[int64] {.exportpy: "read_ints64".} = a.readSeq(address, size, int64)
 proc readUInt(a: Process, address: ByteAddress): uint32 {.exportpy: "read_uint".} = a.read(address, uint32)
 proc readUInts(a: Process, address: ByteAddress, size: int32): seq[uint32] {.exportpy: "read_uints".} = a.readSeq(address, size, uint32)
+proc readUInt64(a: Process, address: ByteAddress): uint64 {.exportpy: "read_uint64".} = a.read(address, uint64)
+proc readUInts64(a: Process, address: ByteAddress, size: int32): seq[uint64] {.exportpy: "read_uints64".} = a.readSeq(address, size, uint64)
 proc readFloat(a: Process, address: ByteAddress): float32 {.exportpy: "read_float".} = a.read(address, float32)
 proc readFloats(a: Process, address: ByteAddress, size: int32): seq[float32] {.exportpy: "read_floats".} = a.readSeq(address, size, float32)
 proc readFloat64(a: Process, address: ByteAddress): float64 {.exportpy: "read_float64".} = a.read(address, float64)
