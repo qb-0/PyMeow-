@@ -1,5 +1,6 @@
 from pymeow import *
 
+DEBUG = True
 
 class Pointer:
     entity_list = 0x12E330
@@ -59,7 +60,7 @@ class Entity:
 
 
 def main():
-    mem = process_by_name("linux_64_client")
+    mem = process_by_name("linux_64_client", DEBUG)
     base = mem["baseAddr"]
     overlay = overlay_init("AssaultCube")
     entity_list = read_int(mem, base + Pointer.entity_list)

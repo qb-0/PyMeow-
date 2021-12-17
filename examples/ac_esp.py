@@ -1,6 +1,6 @@
 from pymeow import *
 
-DEBUG = False
+DEBUG = True
 
 
 class Pointer:
