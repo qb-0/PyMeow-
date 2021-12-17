@@ -1,5 +1,3 @@
-v1.5 - Windows
-
 ################################################################################################################
 Memory
 ################################################################################################################
@@ -14,6 +12,8 @@ read_int(Process, address: int) -> int
 read_ints(Process, address: int, size: int) -> int array
 read_uint(Process, address: int) -> int
 read_uints(Process, address: int, size: int) -> int array
+read_uint64(Process, address: int) -> int
+read_uints64(Process, address: int, size: int) -> int array
 read_int16(Process, address: int) -> int16
 read_ints16(Process, address: int) -> int16 array
 read_int64(Process, address: int) -> int64
