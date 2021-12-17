@@ -100,27 +100,27 @@ proc memoryErr(m: string, a: ByteAddress) {.inline.} =
     fmt"{m} failed [Address: 0x{a.toHex()}] [Error: {GetLastError()}]"
   )
 
-proc read(self: Process, address: ByteAddress, t: typedesc): t =
+proc read(a: Process, address: ByteAddress, t: typedesc): t =
   if ReadProcessMemory(
-    self.handle, cast[pointer](address), result.addr, sizeof(t), nil
+    a.handle, cast[pointer](address), result.addr, sizeof(t), nil
   ) == FALSE:
     memoryErr("Read", address)
 
-  if self.debug:
+  if a.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
-proc write(self: Process, address: ByteAddress, data: auto) =
+proc write(a: Process, address: ByteAddress, data: auto) =
   if WriteProcessMemory(
-    self.handle, cast[pointer](address), data.unsafeAddr, sizeof(data), nil
+    a.handle, cast[pointer](address), data.unsafeAddr, sizeof(data), nil
   ) == FALSE:
     memoryErr("Write", address)
   
-  if self.debug:
+  if a.debug:
     echo fmt"[W] [{$type(data)}] 0x{address.toHex()} -> {data}"
 
-proc writeArray[T](self: Process, address: ByteAddress, data: openArray[T]) =
+proc writeArray[T](a: Process, address: ByteAddress, data: openArray[T]) =
   if WriteProcessMemory(
-    self.handle, cast[pointer](address), data.unsafeAddr, sizeof(T) * data.len, nil
+    a.handle, cast[pointer](address), data.unsafeAddr, sizeof(T) * data.len, nil
   ) == FALSE:
     memoryErr("Write", address)
 
@@ -135,6 +135,9 @@ proc readSeq(a: Process, address: ByteAddress, size: SIZE_T,  t: typedesc = byte
     a.handle, cast[pointer](address), result[0].addr, size * sizeof(t), nil
   ) == FALSE:
     memoryErr("readSeq", address)
+
+  if a.debug:
+    echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
 proc aobScan(a: Process, pattern: string, module: Module = Module()): ByteAddress {.exportpy: "aob_scan".} =
   var 
@@ -185,7 +188,7 @@ proc patchBytes(a: Process, address: ByteAddress, data: openArray[byte]) {.expor
     a.write(address + i, b)
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), data.len, oldProt, nil)
 
-proc injectDll(a: Process, dllPath: string) {.exportpy: "inject_dll".} =
+proc injectLibrary(a: Process, dllPath: string) {.exportpy: "inject_library".} =
   let vPtr = VirtualAllocEx(a.handle, nil, dllPath.len(), MEM_RESERVE or MEM_COMMIT, PAGE_EXECUTE_READWRITE)
   WriteProcessMemory(a.handle, vPtr, dllPath[0].unsafeAddr, dllPath.len, nil)
   if CreateRemoteThread(a.handle, nil, 0, cast[LPTHREAD_START_ROUTINE](LoadLibraryA), vPtr, 0, nil) == FALSE:
