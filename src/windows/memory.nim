@@ -105,7 +105,6 @@ proc read(a: Process, address: ByteAddress, t: typedesc): t =
     a.handle, cast[pointer](address), result.addr, sizeof(t), nil
   ) == FALSE:
     memoryErr("Read", address)
-
   if a.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
@@ -114,7 +113,6 @@ proc write(a: Process, address: ByteAddress, data: auto) =
     a.handle, cast[pointer](address), data.unsafeAddr, sizeof(data), nil
   ) == FALSE:
     memoryErr("Write", address)
-  
   if a.debug:
     echo fmt"[W] [{$type(data)}] 0x{address.toHex()} -> {data}"
 
@@ -135,7 +133,6 @@ proc readSeq(a: Process, address: ByteAddress, size: SIZE_T,  t: typedesc = byte
     a.handle, cast[pointer](address), result[0].addr, size * sizeof(t), nil
   ) == FALSE:
     memoryErr("readSeq", address)
-
   if a.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
