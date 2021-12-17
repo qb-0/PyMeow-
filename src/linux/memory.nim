@@ -50,7 +50,6 @@ proc read*(a: Process, address: ByteAddress, t: typedesc): t =
   iosrc.iov_base = cast[pointer](address)
   iosrc.iov_len = size
   discard process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
-
   if a.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
@@ -65,7 +64,6 @@ proc write*(a: Process, address: ByteAddress, data: auto): int {.discardable.} =
   iodst.iov_base = cast[pointer](address)
   iodst.iov_len = size
   process_vm_writev(a.pid, iosrc.addr, 1, iodst.addr, 1, 0)
-
   if a.debug:
     echo fmt"[W] [{$type(data)}] 0x{address.toHex()} -> {data}"
 
@@ -95,7 +93,6 @@ proc readSeq*(a: Process, address: ByteAddress, size: int, t: typedesc = byte): 
   iosrc.iov_base = cast[pointer](address)
   iosrc.iov_len = bsize
   process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
-
   if a.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
 
@@ -111,6 +108,7 @@ proc processByName*(name: string, debug: bool = false): Process {.exportpy: "pro
         result.pid = pid
         result.modules = getModules(pid)
         result.baseAddr = result.modules[result.name].baseAddr
+        result.debug = debug
         return
   raise newException(IOError, fmt"Process not found ({name})")
 
@@ -123,6 +121,7 @@ proc processByPid*(pid: int, debug: bool = false): Process {.exportpy: "process_
     result.pid = pid
     result.modules = getModules(pid)
     result.baseAddr = result.modules[result.name].baseAddr
+    result.debug = debug
   except IOError:
     raise newException(IOError, fmt"Pid ({pid}) does not exist")
 
