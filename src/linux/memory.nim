@@ -11,6 +11,7 @@ type
     pid*: int
     baseAddr*: ByteAddress
     modules*: Table[string, Module]
+    debug*: bool
 
   Module* = object
     baseAddr*: ByteAddress
@@ -50,6 +51,9 @@ proc read*(a: Process, address: ByteAddress, t: typedesc): t =
   iosrc.iov_len = size
   discard process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
 
+  if a.debug:
+    echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
+
 proc write*(a: Process, address: ByteAddress, data: auto): int {.discardable.} =
   var
     iosrc, iodst: IOVec
@@ -61,6 +65,9 @@ proc write*(a: Process, address: ByteAddress, data: auto): int {.discardable.} =
   iodst.iov_base = cast[pointer](address)
   iodst.iov_len = size
   process_vm_writev(a.pid, iosrc.addr, 1, iodst.addr, 1, 0)
+
+  if a.debug:
+    echo fmt"[W] [{$type(data)}] 0x{address.toHex()} -> {data}"
 
 proc writeArray[T](a: Process, address: ByteAddress, data: openArray[T]): int {.discardable.} =
   var
@@ -89,7 +96,10 @@ proc readSeq*(a: Process, address: ByteAddress, size: int, t: typedesc = byte): 
   iosrc.iov_len = bsize
   process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
 
-proc processByName*(name: string): Process {.exportpy: "process_by_name"} =
+  if a.debug:
+    echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
+
+proc processByName*(name: string, debug: bool = false): Process {.exportpy: "process_by_name"} =
   if getuid() != 0:
     raise newException(IOError, "Root required!")
 
@@ -104,7 +114,7 @@ proc processByName*(name: string): Process {.exportpy: "process_by_name"} =
         return
   raise newException(IOError, fmt"Process not found ({name})")
 
-proc processByPid*(pid: int): Process {.exportpy: "process_by_pid".} =
+proc processByPid*(pid: int, debug: bool = false): Process {.exportpy: "process_by_pid".} =
   if getuid() != 0:
     raise newException(IOError, "Root required!")
 
