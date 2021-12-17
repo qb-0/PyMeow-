@@ -16,7 +16,7 @@ type
   Module* = object
     baseAddr*: ByteAddress
     moduleSize*: int
-    regions*: seq[tuple[s: ByteAddress, e: ByteAddress, size: int]]
+    regions*: seq[tuple[s: ByteAddress, e: ByteAddress, size: int, readable: bool]]
 
 proc process_vm_readv(pid: int, local_iov: ptr IOVec, liovcnt: culong, remote_iov: ptr IOVec, riovcnt: culong, flags: culong): cint {.importc, header: "<sys/uio.h>", discardable.}
 proc process_vm_writev(pid: int, local_iov: ptr IOVec, liovcnt: culong, remote_iov: ptr IOVec, riovcnt: culong, flags: culong): cint {.importc, header: "<sys/uio.h>", discardable.}
@@ -36,6 +36,7 @@ proc getModules(pid: int): Table[string, Module] =
         s: parseHexInt(hSplit[0]), 
         e: parseHexInt(hSplit[1]),
         size: parseHexInt(hSplit[1]) - parseHexInt(hSplit[0]),
+        readable: "r" in s[1]
       )
     )
     result[name].moduleSize = result[name].regions[^1].e - result[name].baseAddr
@@ -149,6 +150,9 @@ proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.export
     )
 
   for r in module.regions:
+    if not r.readable:
+      curAddr += r.size
+      continue
     let byteString = cast[string](a.readSeq(r.s, r.size)).toHex()
     let b = byteString.findAllBounds(rePattern)
     if b.len != 0:
