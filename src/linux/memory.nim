@@ -18,8 +18,23 @@ type
     moduleSize*: int
     regions*: seq[tuple[s: ByteAddress, e: ByteAddress, size: int, readable: bool]]
 
-proc process_vm_readv(pid: int, local_iov: ptr IOVec, liovcnt: culong, remote_iov: ptr IOVec, riovcnt: culong, flags: culong): cint {.importc, header: "<sys/uio.h>", discardable.}
-proc process_vm_writev(pid: int, local_iov: ptr IOVec, liovcnt: culong, remote_iov: ptr IOVec, riovcnt: culong, flags: culong): cint {.importc, header: "<sys/uio.h>", discardable.}
+proc process_vm_readv(
+  pid: int, 
+  local_iov: ptr IOVec, 
+  liovcnt: culong, 
+  remote_iov: ptr IOVec, 
+  riovcnt: culong, 
+  flags: culong
+): cint {.importc, header: "<sys/uio.h>", discardable.}
+
+proc process_vm_writev(
+  pid: int, 
+  local_iov: ptr IOVec, 
+  liovcnt: culong, 
+  remote_iov: ptr IOVec, 
+  riovcnt: culong, 
+  flags: culong
+): cint {.importc, header: "<sys/uio.h>", discardable.}
 
 proc getModules(pid: int): Table[string, Module] =
   for l in lines(fmt"/proc/{pid}/maps"):
@@ -40,6 +55,51 @@ proc getModules(pid: int): Table[string, Module] =
       )
     )
     result[name].moduleSize = result[name].regions[^1].e - result[name].baseAddr
+
+proc processByName*(name: string, debug: bool = false): Process {.exportpy: "process_by_name"} =
+  if getuid() != 0:
+    raise newException(IOError, "Root required!")
+
+  let allFiles = toSeq(walkDir("/proc", relative = true))
+  for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
+      let procName = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
+      if name in procName:
+        result.name = procName
+        result.pid = pid
+        result.modules = getModules(pid)
+        result.baseAddr = result.modules[result.name].baseAddr
+        result.debug = debug
+        return
+  raise newException(IOError, fmt"Process not found ({name})")
+
+proc processByPid*(pid: int, debug: bool = false): Process {.exportpy: "process_by_pid".} =
+  if getuid() != 0:
+    raise newException(IOError, "Root required!")
+
+  try:
+    result.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
+    result.pid = pid
+    result.modules = getModules(pid)
+    result.baseAddr = result.modules[result.name].baseAddr
+    result.debug = debug
+  except IOError:
+    raise newException(IOError, fmt"Pid ({pid}) does not exist")
+
+iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
+  if getuid() != 0:
+    raise newException(IOError, "Root required!")
+
+  let allFiles = toSeq(walkDir("/proc", relative = true))
+  for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
+    try:
+      var r: Process
+      r.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
+      r.pid = pid
+      r.modules = getModules(pid)
+      r.baseAddr = r.modules[r.name].baseAddr
+      yield r
+    except:
+      continue
 
 proc read*(a: Process, address: ByteAddress, t: typedesc): t =
   var
@@ -96,51 +156,6 @@ proc readSeq*(a: Process, address: ByteAddress, size: int, t: typedesc = byte): 
   process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
   if a.debug:
     echo fmt"[R] [{$type(result)}] 0x{address.toHex()} -> {result}"
-
-proc processByName*(name: string, debug: bool = false): Process {.exportpy: "process_by_name"} =
-  if getuid() != 0:
-    raise newException(IOError, "Root required!")
-
-  let allFiles = toSeq(walkDir("/proc", relative = true))
-  for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
-      let procName = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
-      if name in procName:
-        result.name = procName
-        result.pid = pid
-        result.modules = getModules(pid)
-        result.baseAddr = result.modules[result.name].baseAddr
-        result.debug = debug
-        return
-  raise newException(IOError, fmt"Process not found ({name})")
-
-proc processByPid*(pid: int, debug: bool = false): Process {.exportpy: "process_by_pid".} =
-  if getuid() != 0:
-    raise newException(IOError, "Root required!")
-
-  try:
-    result.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
-    result.pid = pid
-    result.modules = getModules(pid)
-    result.baseAddr = result.modules[result.name].baseAddr
-    result.debug = debug
-  except IOError:
-    raise newException(IOError, fmt"Pid ({pid}) does not exist")
-
-iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
-  if getuid() != 0:
-    raise newException(IOError, "Root required!")
-
-  let allFiles = toSeq(walkDir("/proc", relative = true))
-  for pid in mapIt(filterIt(allFiles, isDigit(it.path[0])), parseInt(it.path)):
-    try:
-      var r: Process
-      r.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
-      r.pid = pid
-      r.modules = getModules(pid)
-      r.baseAddr = r.modules[r.name].baseAddr
-      yield r
-    except:
-      continue
 
 proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.exportpy: "aob_scan".} =
   var 
