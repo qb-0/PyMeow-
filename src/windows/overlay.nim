@@ -1,5 +1,5 @@
 import
-  nimpy, winim, ../vector,
+  nimpy, winim,
   nimgl/[glfw, glfw/native, opengl]
 from strformat import fmt
 

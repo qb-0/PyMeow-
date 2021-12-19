@@ -1,7 +1,7 @@
 import 
   strutils, math, osproc,
   nimgl/[glfw, opengl], opengl/glut,
-  nimpy, misc, x11/keysym, ../vector
+  nimpy, misc, x11/keysym
 
 pyExportModule("pymeow")
 
