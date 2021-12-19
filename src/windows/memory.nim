@@ -59,7 +59,6 @@ proc processByName(name: string, debug: bool = false, rights: int32 = 0x1F0FFF):
     read: int32
 
   assert EnumProcesses(pidArray[0].addr, 2048, read.addr) != FALSE
-
   for i in 0..<read div 4:
     var p = pidInfo(pidArray[i])
     if p.pid != 0 and name == p.name:
@@ -68,7 +67,6 @@ proc processByName(name: string, debug: bool = false, rights: int32 = 0x1F0FFF):
       if p.handle != 0:
         return p
       raise newException(Exception, fmt"Unable to open Process [Pid: {p.pid}] [Error code: {GetLastError()}]")
-      
   raise newException(Exception, fmt"Process '{name}' not found")
 
 iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
@@ -77,7 +75,6 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
     read: int32
 
   assert EnumProcesses(pidArray[0].addr, 2048, read.addr) != FALSE
-
   for i in 0..<read div 4:
     var p = pidInfo(pidArray[i])
     if p.pid != 0:
