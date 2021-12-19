@@ -144,7 +144,8 @@ proc aobScan(a: Process, pattern: string, module: Module = Module()): ByteAddres
     curAddr += mbi.RegionSize.int
     VirtualQueryEx(a.handle, cast[LPCVOID](curAddr), mbi.addr, cast[SIZE_T](sizeof(mbi)))
 
-    if mbi.State != MEM_COMMIT or mbi.State == PAGE_NOACCESS: continue
+    if mbi.State != MEM_COMMIT or mbi.State == PAGE_NOACCESS: 
+      continue
 
     var oldProt: int32
     VirtualProtectEx(a.handle, cast[LPCVOID](curAddr), mbi.RegionSize, PAGE_EXECUTE_READWRITE, oldProt.addr)
