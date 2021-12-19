@@ -16,12 +16,7 @@ type
 
   Rgb = array[0..2, float32]
 
-
 var OverlayWindow: GLFWWindow
-
-#[
-  overlay
-]#
 
 proc getWindowInfo(name: string): WinInfo =
   let 

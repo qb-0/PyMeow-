@@ -20,10 +20,6 @@ type
 
 var OverlayWindow: GLFWWindow
 
-#[
-  overlay
-]#
-
 proc overlayInit(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOffset: int32 = 25): Overlay {.exportpy: "overlay_init".} =
   var rect: RECT
   assert glfwInit()
@@ -92,10 +88,6 @@ proc loop(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
 
 proc setPos(a: Overlay, x, y: int32) {.exportpy: "overlay_set_pos".} =
   SetWindowPos(a.hwnd, -1, x, y, 0, 0, 0x0001)
-
-#[
-  bitmap font rendering
-]#
 
 proc fontInit(height: int32, fontName: string): Font {.exportpy: "font_init".} =
   result.fontHDC = wglGetCurrentDC()
