@@ -83,7 +83,7 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
     if p.pid != 0:
       yield p
 
-proc close(a: Process): bool {.discardable, exportpy.} = 
+proc close(a: Process): bool {.exportpy.} = 
   CloseHandle(a.handle) == TRUE
 
 proc memoryErr(m: string, a: ByteAddress) {.inline.} =
