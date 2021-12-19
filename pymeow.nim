@@ -3,7 +3,7 @@
   Meow @ 2020
 ]#
 
-import src/[vector, shapes]
+import src/[vector, shapes, memop]
 
 when defined(windows):
   import src/windows/[
