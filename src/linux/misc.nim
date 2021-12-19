@@ -1,11 +1,10 @@
 import 
   os, x11/[x, xlib, xtst], 
-  nimpy, colors
+  nimpy
 
 pyExportModule("pymeow")
 
 var display = XOpenDisplay(nil)
-const cheatsheet = staticRead("../../cheatsheet.txt")
 
 proc keyPressed*(key: KeySym): bool {.exportpy: "key_pressed".} =
   var keys: array[0..31, char]
@@ -23,13 +22,3 @@ proc mouseClick* {.exportpy: "mouse_click"} =
 proc mouseMove*(x, y: cint) {.exportpy: "mouse_move".} =
   discard XTestFakeMotionEvent(display, -1, x, y, 0)
   discard XFlush(display)
-
-proc rgb(color: string): array[0..2, float32] {.exportpy.} =
-  try:
-    let c = parseColor(color).extractRGB()
-    [c.r.float32, c.g.float32, c.b.float32]
-  except:
-    [0.float32, 0, 0]
-
-proc help {.exportpy.} =
-  echo cheatsheet
