@@ -6,7 +6,8 @@
 import src/[
   vector, 
   shapes, 
-  memop
+  memop,
+  wts
 ]
 
 when defined(windows):
