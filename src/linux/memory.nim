@@ -8,7 +8,7 @@ pyExportModule("pymeow")
 type
   Process* = object
     name*: string
-    pid*: int
+    pid*: Pid
     baseAddr*: ByteAddress
     modules*: Table[string, Module]
     debug*: bool
@@ -19,7 +19,7 @@ type
     regions*: seq[tuple[s: ByteAddress, e: ByteAddress, size: int, readable: bool]]
 
 proc process_vm_readv(
-  pid: int, 
+  pid: Pid, 
   local_iov: ptr IOVec, 
   liovcnt: culong, 
   remote_iov: ptr IOVec, 
@@ -28,7 +28,7 @@ proc process_vm_readv(
 ): cint {.importc, header: "<sys/uio.h>", discardable.}
 
 proc process_vm_writev(
-  pid: int, 
+  pid: Pid, 
   local_iov: ptr IOVec, 
   liovcnt: culong, 
   remote_iov: ptr IOVec, 
@@ -36,7 +36,7 @@ proc process_vm_writev(
   flags: culong
 ): cint {.importc, header: "<sys/uio.h>", discardable.}
 
-proc getModules(pid: int): Table[string, Module] =
+proc getModules(pid: Pid): Table[string, Module] =
   for l in lines(fmt"/proc/{pid}/maps"):
     let 
       s = l.split()
@@ -56,7 +56,7 @@ proc getModules(pid: int): Table[string, Module] =
     )
     result[name].moduleSize = result[name].regions[^1].e - result[name].baseAddr
 
-proc processByPid(pid: int, debug: bool = false): Process {.exportpy: "process_by_pid".} =
+proc processByPid(pid: Pid, debug: bool = false): Process {.exportpy: "process_by_pid".} =
   if getuid() != 0:
     raise newException(IOError, "Root required!")
 
@@ -78,8 +78,8 @@ proc processByName(name: string, debug: bool = false): Process {.exportpy: "proc
       let procName = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
       if name in procName:
         result.name = procName
-        result.pid = pid
-        result.modules = getModules(pid)
+        result.pid = pid.Pid
+        result.modules = getModules(pid.Pid)
         result.baseAddr = result.modules[result.name].baseAddr
         result.debug = debug
         return
@@ -94,8 +94,8 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
     try:
       var r: Process
       r.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
-      r.pid = pid
-      r.modules = getModules(pid)
+      r.pid = pid.Pid
+      r.modules = getModules(pid.Pid)
       r.baseAddr = r.modules[r.name].baseAddr
       yield r
     except:
