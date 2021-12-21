@@ -16,7 +16,7 @@ type
   Module* = object
     baseAddr*: ByteAddress
     moduleSize*: int
-    regions*: seq[tuple[s: ByteAddress, e: ByteAddress, size: int, readable: bool]]
+    regions*: seq[tuple[start: ByteAddress, `end`: ByteAddress, size: int, readable: bool]]
 
 proc process_vm_readv(
   pid: Pid, 
@@ -48,13 +48,13 @@ proc getModules(pid: Pid): Table[string, Module] =
       result[name].baseAddr = parseHexInt(hSplit[0])
     result[name].regions.add(
       (
-        s: parseHexInt(hSplit[0]), 
-        e: parseHexInt(hSplit[1]),
+        start: parseHexInt(hSplit[0]), 
+        `end`: parseHexInt(hSplit[1]),
         size: parseHexInt(hSplit[1]) - parseHexInt(hSplit[0]),
         readable: "r" in s[1]
       )
     )
-    result[name].moduleSize = result[name].regions[^1].e - result[name].baseAddr
+    result[name].moduleSize = result[name].regions[^1].`end` - result[name].baseAddr
 
 proc processByPid(pid: Pid, debug: bool = false): Process {.exportpy: "process_by_pid".} =
   if getuid() != 0:
@@ -164,7 +164,7 @@ proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.export
     if not r.readable:
       curAddr += r.size
       continue
-    let byteString = cast[string](a.readSeq(r.s, r.size)).toHex()
+    let byteString = cast[string](a.readSeq(r.start, r.size)).toHex()
     let b = byteString.findAllBounds(rePattern)
     if b.len != 0:
       return b[0].a div 2 + curAddr
