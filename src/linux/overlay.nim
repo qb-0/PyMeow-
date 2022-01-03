@@ -135,8 +135,10 @@ proc renderString*(x, y: float, text: string, color: Rgb, align: bool = false, f
   for c in text:
     glutBitmapCharacter(f, ord(c))
 
-proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align: bool = false, font: int = 5, offset: float = 12) {.exportpy: "render_string_lines".} =
-  let f = getFontPtr()
+proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align: bool = false, font: int = 5) {.exportpy: "render_string_lines".} =
+  let 
+    f = getFontPtr()
+    fHeight = glutBitMapHeight(f).float
   glColor3f(color[0], color[1], color[2])
   var yPos = y
 
@@ -146,6 +148,6 @@ proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align:
     else:
       glRasterPos2f(x, yPos)
 
-    yPos -= offset
+    yPos -= fHeight
     for c in l:
       glutBitmapCharacter(f, ord(c))
