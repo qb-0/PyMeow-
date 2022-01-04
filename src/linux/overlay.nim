@@ -139,8 +139,9 @@ proc renderStringLines(x, y: float, lines: openArray[string], color: Rgb, align:
   let 
     f = getFontPtr()
     fHeight = glutBitMapHeight(f).float
-  glColor3f(color[0], color[1], color[2])
   var yPos = y
+
+  glColor3f(color[0], color[1], color[2])
 
   for l in lines:
     if align:
