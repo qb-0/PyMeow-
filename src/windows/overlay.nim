@@ -106,7 +106,7 @@ proc fontInit(height: int32, fontName: string): Font {.exportpy: "font_init".} =
   SelectObject(result.fontHDC, hOldFont)
   discard DeleteObject(hFont)
 
-proc deinint(a: Font) {.exportpy: "font_deinit".} = 
+proc deinit(a: Font) {.exportpy: "font_deinit".} = 
   glDeleteLists(a.font, 96)
 
 proc print(a: Font, x, y: float, text: string, color: Rgb) {.exportpy: "font_print".} =
