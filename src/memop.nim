@@ -13,9 +13,8 @@ proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): B
     result = a.read(result + o, ByteAddress)
 
 proc readString(a: Process, address: ByteAddress): string {.exportpy: "read_string".} =
-  let r = a.read(address, array[0..100, char])
-  for i in r[0..r.find('\0')]: 
-    result &= i
+  let s = a.read(address, array[0..100, char])
+  $cast[cstring](s[0].unsafeAddr)
 
 proc readInt(a: Process, address: ByteAddress): int32 {.exportpy: "read_int".} = a.read(address, int32)
 proc readInts(a: Process, address: ByteAddress, size: int32): seq[int32] {.exportpy: "read_ints".} = a.readSeq(address, size, int32)
