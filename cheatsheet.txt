@@ -1,8 +1,9 @@
 ################################################################################################################
 Memory
 ################################################################################################################
-process_by_name(name: string, debug: bool = false, rights: int = 0x1F0FFF) -> Process
-process_by_pid(pid: int, debug: bool = false, rights: int = 0x1F0FFF) -> Process
+process_by_name(name: string, debug: bool = false, rights: int = PROCESS_ALL_ACCESS) -> Process
+process_by_pid(pid: int, debug: bool = false, rights: int = PROCESS_ALL_ACCESS) -> Process
+process_platform(Process) -> int
 enumerate_processes() -> Process (iterator)
 close(Process) -> bool
 
