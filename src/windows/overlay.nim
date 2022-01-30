@@ -114,7 +114,7 @@ proc print(a: Font, x, y: float, text: string, color: Rgb) {.exportpy: "font_pri
   glWindowPos2f(x, y)
   glPushAttrib(GL_LIST_BIT)
   glListBase(a.font - 32)
-  glCallLists(cast[int32](text.len), GL_UNSIGNED_BYTE, cast[pointer](text[0].unsafeAddr))
+  glCallLists(text.len.int32, GL_UNSIGNED_BYTE, cast[pointer](text[0].unsafeAddr))
   glPopAttrib()
 
 proc printLines(a: Font, x, y: float, lines: openArray[string], color: Rgb, offset: float32 = 2) {.exportpy: "font_print_lines".} =
@@ -124,6 +124,6 @@ proc printLines(a: Font, x, y: float, lines: openArray[string], color: Rgb, offs
   glListBase(a.font - 32)
   for t in lines:
     glWindowPos2f(x, yPos)
-    glCallLists(cast[int32](t.len), GL_UNSIGNED_BYTE, cast[pointer](t[0].unsafeAddr))
+    glCallLists(t.len.int32, GL_UNSIGNED_BYTE, cast[pointer](t[0].unsafeAddr))
     yPos -= a.height.float32 + offset
   glPopAttrib()
