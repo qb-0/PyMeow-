@@ -7,10 +7,12 @@ when defined(linux):
 
 pyExportModule("pymeow")
 
+
 proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): ByteAddress {.exportpy: "pointer_chain".} =
   result = a.read(baseAddr, ByteAddress)
-  for o in offsets:
+  for o in offsets[0..^2]:
     result = a.read(result + o, ByteAddress)
+  result = result + offsets[^1]
 
 proc readString(a: Process, address: ByteAddress): string {.exportpy: "read_string".} =
   let s = a.read(address, array[0..100, char])
