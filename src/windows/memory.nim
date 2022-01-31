@@ -137,12 +137,12 @@ proc aobScan(a: Process, pattern: string, module: Module = Module()): ByteAddres
     scanEnd = cast[int](sysInfo.lpMaximumApplicationAddress)
 
   var mbi = MEMORY_BASIC_INFORMATION()
-  VirtualQueryEx(a.handle, cast[LPCVOID](scanBegin), mbi.addr, cast[SIZE_T](sizeof(mbi)))
+  VirtualQueryEx(a.handle, cast[LPCVOID](scanBegin), mbi.addr, sizeof(mbi).SIZE_T)
 
   var curAddr = scanBegin
   while curAddr < scanEnd:
     curAddr += mbi.RegionSize.int
-    VirtualQueryEx(a.handle, cast[LPCVOID](curAddr), mbi.addr, cast[SIZE_T](sizeof(mbi)))
+    VirtualQueryEx(a.handle, cast[LPCVOID](curAddr), mbi.addr, sizeof(mbi).SIZE_T)
 
     if mbi.State != MEM_COMMIT or mbi.State == PAGE_NOACCESS: 
       continue
@@ -178,7 +178,7 @@ proc injectLibrary(a: Process, dllPath: string) {.exportpy: "inject_library".} =
 
 proc pageProtection(a: Process, address: ByteAddress, newProtection: int32 = 0x40): int32 {.exportpy: "page_protection".} =
   var mbi = MEMORY_BASIC_INFORMATION()
-  discard VirtualQueryEx(a.handle, cast[LPCVOID](address), mbi.addr, cast[SIZE_T](sizeof(mbi)))
+  discard VirtualQueryEx(a.handle, cast[LPCVOID](address), mbi.addr, sizeof(mbi).SIZE_T)
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), mbi.RegionSize, newProtection, result.addr)
 
 proc processPlatform(a: Process): int {.exportpy: "process_platform".} =
