@@ -171,7 +171,7 @@ proc patchBytes(a: Process, address: ByteAddress, data: openArray[byte]) {.expor
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), data.len, oldProt, nil)
 
 proc injectLibrary(a: Process, dllPath: string) {.exportpy: "inject_library".} =
-  let vPtr = VirtualAllocEx(a.handle, nil, dllPath.len(), MEM_RESERVE or MEM_COMMIT, PAGE_EXECUTE_READWRITE)
+  let vPtr = VirtualAllocEx(a.handle, nil, dllPath.len, MEM_RESERVE or MEM_COMMIT, PAGE_EXECUTE_READWRITE)
   WriteProcessMemory(a.handle, vPtr, dllPath[0].unsafeAddr, dllPath.len, nil)
   if CreateRemoteThread(a.handle, nil, 0, cast[LPTHREAD_START_ROUTINE](LoadLibraryA), vPtr, 0, nil) == FALSE:
     raise newException(Exception, fmt"Injection failed [Error: {GetLastError()}]")
