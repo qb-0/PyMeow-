@@ -118,7 +118,7 @@ proc radCircle(x, y, radius: float, value: int, color: Rgb) {.exportpy: "rad_cir
     )
   glEnd()
 
-proc raCircleV(pos: Vec2, radius: float, value: int, color: Rgb) {.exportpy: "rad_circle_v".} =
+proc radCircleV(pos: Vec2, radius: float, value: int, color: Rgb) {.exportpy: "rad_circle_v".} =
   radCircle(pos.x, pos.y, radius, value, color)
 
 proc valueBar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = true) {.exportpy: "value_bar".} =
