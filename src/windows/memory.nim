@@ -83,6 +83,9 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
 proc close(a: Process): bool {.exportpy.} = 
   CloseHandle(a.handle) == TRUE
 
+proc kill(a: Process): bool {.exportpy.} =
+  TerminateProcess(a.handle, 1) == TRUE
+
 proc memoryErr(m: string, a: ByteAddress) {.inline.} =
   raise newException(
     AccessViolationDefect,
