@@ -35,16 +35,16 @@ class Entity:
     def update(self):
         self.dormant = read_bool(self.mem, self.addr + Offsets.m_bDormant)
         if self.dormant:
-            return False
+            return
         self.health = read_int(self.mem, self.addr + Offsets.m_iHealth)
         if self.health <= 0:
-            return False
+            return
         self.team = read_int(self.mem, self.addr + Offsets.m_iTeamNum)
         self.pos3D = read_vec3(self.mem, self.addr + Offsets.m_vecOrigin)
         try:
             self.pos2D = wts_dx(self.ov, self.vm, self.pos3D)
         except:
-            return False
+            return
         self.bone_matrix = read_int64(self.mem, self.addr + Offsets.m_nForceBone + 0x2C)
         self.head_pos3D["x"] = read_float(self.mem, self.bone_matrix + 0x30 * 8 + 0x0C)
         self.head_pos3D["y"] = read_float(self.mem, self.bone_matrix + 0x30 * 8 + 0x1C)
@@ -52,7 +52,7 @@ class Entity:
         try:
             self.head_pos2D = wts_dx(self.ov, self.vm, self.head_pos3D)
         except:
-            return False
+            return
         self.color = Colors.orange if self.team == 2 else Colors.cyan
         return True
 
