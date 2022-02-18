@@ -14,7 +14,7 @@ proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int]): B
     result = a.read(result + o, ByteAddress)
   result = result + offsets[^1]
 
-proc readStrings(a: Process, address: ByteAddress): string {.exportpy: "read_string".} =
+proc readString(a: Process, address: ByteAddress): string {.exportpy: "read_string".} =
   let s = a.read(address, array[0..100, char])
   $cast[cstring](s[0].unsafeAddr)
 
