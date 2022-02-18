@@ -86,7 +86,7 @@ proc processByName(name: string, debug: bool = false): Process {.exportpy: "proc
   raise newException(IOError, fmt"Process not found ({name})")
 
 proc kill(a: Process): bool {.exportpy.} =
-  kill(a.pid, 0) == 0
+  kill(a.pid, 9) == 0
 
 iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
   if getuid() != 0:
