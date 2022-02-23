@@ -70,6 +70,7 @@ def main():
         local_player_addr = read_int(mem, base + Pointer.local_player)
         local_ent = Entity(local_player_addr, mem)
         matrix = read_floats(mem, base + Pointer.view_matrix, 16)
+
         for i in range(31):
             ent_addr = read_int(mem, entity_list + i * 8)
             if ent_addr != 0 and ent_addr != local_player_addr:
@@ -79,6 +80,7 @@ def main():
                         ent_obj.pos2d = wts_ogl(overlay, matrix, ent_obj.pos3d)
                     except:
                         continue
+
                     ent_obj.render_snapline(overlay)
                     ent_obj.render_info(local_ent)
                     ent_obj.render_circle()
