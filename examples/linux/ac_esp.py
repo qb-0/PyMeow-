@@ -1,7 +1,7 @@
 from threading import local
 from pymeow import *
 
-DEBUG = False
+DEBUG = True
 
 class Pointer:
     entity_list = 0x1A2520
