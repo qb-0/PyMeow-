@@ -1,17 +1,18 @@
+from threading import local
 from pymeow import *
 
-DEBUG = True
+DEBUG = False
 
 class Pointer:
-    entity_list = 0x12E330
-    local_player = 0x12E328
-    view_matrix = 0x13D3DC
+    entity_list = 0x1A2520
+    local_player = 0x1A2518
+    view_matrix = 0x1B3FBC
 
 
 class Offsets:
-    name = 0x23D
-    health = 0x110
-    team = 0x344
+    name = 0x219
+    health = 0x100
+    team = 0x320
     pos = 0x8
 
 
@@ -69,7 +70,6 @@ def main():
         local_player_addr = read_int(mem, base + Pointer.local_player)
         local_ent = Entity(local_player_addr, mem)
         matrix = read_floats(mem, base + Pointer.view_matrix, 16)
-
         for i in range(31):
             ent_addr = read_int(mem, entity_list + i * 8)
             if ent_addr != 0 and ent_addr != local_player_addr:
@@ -79,7 +79,6 @@ def main():
                         ent_obj.pos2d = wts_ogl(overlay, matrix, ent_obj.pos3d)
                     except:
                         continue
-
                     ent_obj.render_snapline(overlay)
                     ent_obj.render_info(local_ent)
                     ent_obj.render_circle()
