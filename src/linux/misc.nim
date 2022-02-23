@@ -12,6 +12,13 @@ proc keyPressed*(key: KeySym): bool {.exportpy: "key_pressed".} =
   let keycode = XKeysymToKeycode(display, key)
   (ord(keys[keycode.int div 8]) and (1 shl (keycode.int mod 8))) != 0
 
+proc pressKey*(key: KeySym, hold: bool = false) {.exportpy: "press_key".} =
+  let keycode = XKeysymToKeycode(display, key)
+  discard XTestFakeKeyEvent(display, keycode.cuint, 1, CurrentTime)
+  if not hold:
+    discard XTestFakeKeyEvent(display, keycode.cuint, 0, CurrentTime)
+  discard XFlush(display)
+
 proc mouseClick* {.exportpy: "mouse_click"} =
   discard XTestFakeButtonEvent(display, 1, 1, 0)
   discard XFlush(display)

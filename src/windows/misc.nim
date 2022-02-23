@@ -7,6 +7,16 @@ pyExportModule("pymeow")
 proc keyPressed(vKey: int32): bool {.exportpy: "key_pressed".} =
   GetAsyncKeyState(vKey).bool
 
+proc pressKey(vKey: int32) {.exportpy: "press_key".} =
+  var input: INPUT
+  input.`type` = INPUT_KEYBOARD
+  input.ki.wScan = 0
+  input.ki.time = 0
+  input.ki.dwExtraInfo = 0
+  input.ki.wVk = vKey.uint16
+  input.ki.dwFlags = 0
+  SendInput(1, input.addr, sizeof(input).int32)
+
 proc setForeground(winTitle: string): bool {.discardable, exportpy: "set_foreground".} = 
   SetForeGroundWindow(FindWindowA(nil, winTitle))
 

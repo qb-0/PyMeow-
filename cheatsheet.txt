@@ -111,6 +111,7 @@ vec3_closest(a: Vec2, b: Vec3 array) -> Vec3
 Misc
 ################################################################################################################
 key_pressed(vKey: int) -> bool
+press_key(vKey)
 rgb(color: string) -> float array
 wts_ogl(Overlay, matrix: float array (16), pos: Vec3) -> Vec2
 wts_dx(Overlay, matrix: float array (16), pos: Vec3) -> Vec2
