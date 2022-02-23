@@ -7,7 +7,7 @@ process_platform(Process) -> int
 enumerate_processes() -> Process (iterator)
 close(Process) -> bool
 
-read_string(Process, address: int) -> string
+read_string(Process, address: int, size: int = 30) -> string
 read_int(Process, address: int) -> int
 read_ints(Process, address: int, size: int) -> int array
 read_uint(Process, address: int) -> int
@@ -42,7 +42,7 @@ write_vec2(Process, address: int, data: Vec2)
 write_vec3(Process, address: int, data: Vec3)
 write_bool(Process, address: int, data: bool)
 
-pointer_chain(Process, baseAddr: int, offsets: array) -> int
+pointer_chain(Process, baseAddr: int, offsets: array, size: int = 8) -> int
 aob_scan(Process, pattern: string, module: Process["modules"]["moduleName"]) -> int
 nop_code(Process, address: int, length: int)
 patch_bytes(Process, address: int, data: byte array)
