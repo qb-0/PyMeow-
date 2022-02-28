@@ -26,6 +26,9 @@ proc mouseClick* {.exportpy: "mouse_click"} =
   discard XTestFakeButtonEvent(display, 1, 0, 0)
   discard XFlush(display)
 
-proc mouseMove*(x, y: cint) {.exportpy: "mouse_move".} =
-  discard XTestFakeMotionEvent(display, -1, x, y, 0)
+proc mouseMove*(x, y: cint, relative: bool = false) {.exportpy: "mouse_move".} =
+  if relative:
+    discard XTestFakeRelativeMotionEvent(display, x, y, CurrentTime)
+  else:
+    discard XTestFakeMotionEvent(display, -1, x, y, CurrentTime)
   discard XFlush(display)
