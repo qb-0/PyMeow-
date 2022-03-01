@@ -47,6 +47,7 @@ class Memory:
             "vec2": write_vec2,
             "vec3": write_vec3,
             "bool": write_bool,
+            "string": write_string,
         }
 
         try:
