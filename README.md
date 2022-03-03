@@ -15,8 +15,8 @@
 - Clone and Compile: `git clone https://github.com/qb-0/PyMeow && cd PyMeow && nim c pymeow`
 
 ##### <ins>Linux</ins>
-The linux version is still under progress but is ready to use and follows almost the windows api.  
-![Linux Assault Cube ESP](https://github.com/qb-0/PyMeow/blob/master/examples/linux/ac_esp.py)  
+The linux version is still under progress but is ready to use and follows almost the windows api.
+![Linux Assault Cube ESP](https://github.com/qb-0/PyMeow/blob/master/examples/linux/ac_esp.py)
 ![CSGo ESP](https://github.com/qb-0/PyMeow/blob/master/examples/linux/csgo_esp.py)
 
 ## [CSGo ESP](https://github.com/qb-0/PyMeow/blob/master/examples/csgo_esp.py):
