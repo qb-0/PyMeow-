@@ -1,5 +1,5 @@
 # PyMeow
-[<img src=https://pngset.com/images/discord-logo-symbol-green-word-text-transparent-png-1804619.png>](https://discord.gg/pUGxsAUj)
+#### [Discord](https://discord.gg/pUGxsAUj)
 
 #### Cross platform (Windows / Linux) Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
 #### [Windows Cheatsheet / Features](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
