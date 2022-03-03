@@ -1,7 +1,6 @@
-# PyMeow
-#### [Discord](https://discord.gg/pUGxsAUj)
-
+## PyMeow ([Discord](https://discord.gg/pUGxsAUj))
 #### Cross platform (Windows / Linux) Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
+
 #### [Windows Cheatsheet / Features](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
 
 ##### <ins>Installation / Usage</ins>
