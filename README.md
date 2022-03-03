@@ -1,6 +1,6 @@
 # PyMeow
 
-![Discord Shield](https://discordapp.com/api/guilds/949027922436575312/widget.png?style=shield)
+<iframe src="https://discordapp.com/widget?id=949027922436575312&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 #### Cross platform (Windows / Linux) Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
 #### [Windows Cheatsheet / Features](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
