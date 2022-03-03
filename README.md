@@ -1,7 +1,10 @@
 # PyMeow
 
 ![Discord Banner 2](https://discordapp.com/api/guilds/949027922436575312/widget.png?style=banner2)
+
+
 <img src="https://discordapp.com/api/guilds/949027922436575312/widget.png?style=banner2" alt="Discord Banner 2"/>
+
 #### Cross platform (Windows / Linux) Python Library for external Game Hacking created with [Nim](https://nim-lang.org)
 #### [Windows Cheatsheet / Features](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
 
