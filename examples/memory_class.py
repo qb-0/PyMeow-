@@ -42,6 +42,8 @@ class Memory:
             "ints64": write_ints64,
             "float": write_float,
             "floats": write_floats,
+            "float64": write_float64,
+            "floats64": write_floats64,
             "byte": write_byte,
             "bytes": write_bytes,
             "vec2": write_vec2,
