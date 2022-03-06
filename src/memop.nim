@@ -38,8 +38,8 @@ proc readVec2(a: Process, address: ByteAddress): Vec2 {.exportpy: "read_vec2".} 
 proc readVec3(a: Process, address: ByteAddress): Vec3 {.exportpy: "read_vec3".} = a.read(address, Vec3)
 proc readBool(a: Process, address: ByteAddress): bool {.exportpy: "read_bool".} = a.read(address, byte).bool
 
-proc writeString(a: Process, address: ByteAddress, str: string) {.exportpy: "write_string".} =
-  a.writeArray(address, str.cstring.toOpenArrayByte(0, str.high))
+proc writeString(a: Process, address: ByteAddress, data: string) {.exportpy: "write_string".} =
+  a.writeArray(address, data.cstring.toOpenArrayByte(0, data.high))
 
 template writeData = a.write(address, data)
 template writeDatas = a.writeArray(address, data)

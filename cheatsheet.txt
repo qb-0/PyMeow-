@@ -28,6 +28,7 @@ read_vec2(Process, address: int) -> vec2
 read_vec3(Process, address: int) -> vec3
 read_bool(Process, address: int) -> bool
 
+write_string(Process, address: int, data: string)
 write_int(Process, address: int, data: int)
 write_ints(Process, address: int, data: int array)
 write_int16(Process, address: int, data: int)
