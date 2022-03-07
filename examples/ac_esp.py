@@ -2,19 +2,18 @@ from pymeow import *
 
 DEBUG = True
 
-
 class Pointer:
-    player_count = 0x0050F500
-    entity_list = 0x0050F4F8
-    local_player = 0x00509B74
-    view_matrix = 0x00501AE8
+    player_count = 0x187C18
+    entity_list = 0x187C10
+    local_player = 0x187C0C
+    view_matrix = 0x17AFE0
 
 
 class Offsets:
-    name = 0x225
-    health = 0xF8
-    armor = 0xFC
-    team = 0x32C
+    name = 0x205
+    health = 0xEC
+    armor = 0xF0
+    team = 0x30C
     pos = 0x4
 
 
@@ -39,22 +38,23 @@ class Entity:
 
 def main():
     mem = process_by_name("ac_client.exe", DEBUG)
+    base = mem["modules"]["ac_client.exe"]["baseaddr"]
     overlay = overlay_init("AssaultCube")
     font = font_init(10, "Tahoma")
     set_foreground("AssaultCube")
 
     while overlay_loop(overlay):
-        player_count = read_int(mem, Pointer.player_count)
+        player_count = read_int(mem, base + Pointer.player_count)
 
         if player_count > 1:
             try:
-                local_ent = Entity(read_int(mem, Pointer.local_player), mem)
-                v_matrix = read_floats(mem, Pointer.view_matrix, 16)
+                local_ent = Entity(read_int(mem, base + Pointer.local_player), mem)
+                v_matrix = read_floats(mem, base + Pointer.view_matrix, 16)
             except:
                 continue
 
             ent_buffer = read_ints(
-                mem, read_int(mem, Pointer.entity_list), player_count
+                mem, read_int(mem, base + Pointer.entity_list), player_count
             )[1:]
             for addr in ent_buffer:
                 try:
