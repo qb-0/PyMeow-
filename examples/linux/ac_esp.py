@@ -62,7 +62,7 @@ class Entity:
 
 def main():
     mem = process_by_name("linux_64_client", DEBUG)
-    base = mem["baseAddr"]
+    base = mem["baseaddr"]
     overlay = overlay_init("AssaultCube")
     entity_list = read_int(mem, base + Pointer.entity_list)
 

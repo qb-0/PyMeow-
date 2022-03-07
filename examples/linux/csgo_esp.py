@@ -107,7 +107,7 @@ class Entity:
 
 def main():
     mem = process_by_name("csgo_linux64")
-    client_base = mem["modules"]["client_client.so"]["baseAddr"]
+    client_base = mem["modules"]["client_client.so"]["baseaddr"]
     overlay = overlay_init(target="Counter-Strike: Global Offensive - OpenGL")
 
     while overlay_loop(overlay):

@@ -9,12 +9,12 @@ type
   Process* = object
     name*: string
     pid*: Pid
-    baseAddr*: ByteAddress
+    baseaddr*: ByteAddress
     modules*: Table[string, Module]
     debug*: bool
 
   Module* = object
-    baseAddr*: ByteAddress
+    baseaddr*: ByteAddress
     moduleSize*: int
     regions*: seq[tuple[start: ByteAddress, `end`: ByteAddress, size: int, readable: bool]]
 
@@ -44,8 +44,8 @@ proc getModules(pid: Pid): Table[string, Module] =
     if name notin result:
       result[name] = Module()
     let hSplit = s[0].split("-")
-    if result[name].baseAddr == 0:
-      result[name].baseAddr = parseHexInt(hSplit[0])
+    if result[name].baseaddr == 0:
+      result[name].baseaddr = parseHexInt(hSplit[0])
     result[name].regions.add(
       (
         start: parseHexInt(hSplit[0]), 
@@ -54,7 +54,7 @@ proc getModules(pid: Pid): Table[string, Module] =
         readable: "r" in s[1]
       )
     )
-    result[name].moduleSize = result[name].regions[^1].`end` - result[name].baseAddr
+    result[name].moduleSize = result[name].regions[^1].`end` - result[name].baseaddr
 
 proc processByPid(pid: Pid, debug: bool = false): Process {.exportpy: "process_by_pid".} =
   if getuid() != 0:
@@ -64,7 +64,7 @@ proc processByPid(pid: Pid, debug: bool = false): Process {.exportpy: "process_b
     result.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
     result.pid = pid
     result.modules = getModules(pid)
-    result.baseAddr = result.modules[result.name].baseAddr
+    result.baseaddr = result.modules[result.name].baseaddr
     result.debug = debug
   except IOError:
     raise newException(IOError, fmt"Pid ({pid}) does not exist")
@@ -80,7 +80,7 @@ proc processByName(name: string, debug: bool = false): Process {.exportpy: "proc
         result.name = procName
         result.pid = pid.Pid
         result.modules = getModules(pid.Pid)
-        result.baseAddr = result.modules[result.name].baseAddr
+        result.baseaddr = result.modules[result.name].baseaddr
         result.debug = debug
         return
   raise newException(IOError, fmt"Process not found ({name})")
@@ -99,7 +99,7 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
       r.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
       r.pid = pid.Pid
       r.modules = getModules(pid.Pid)
-      r.baseAddr = r.modules[r.name].baseAddr
+      r.baseaddr = r.modules[r.name].baseaddr
       yield r
     except:
       continue
@@ -158,7 +158,7 @@ proc readSeq*(a: Process, address: ByteAddress, size: int, t: typedesc = byte): 
 
 proc aobScan*(a: Process, pattern: string, module: Module): ByteAddress {.exportpy: "aob_scan".} =
   var 
-    curAddr = module.baseAddr
+    curAddr = module.baseaddr
     rePattern = re(
       pattern.toUpper().multiReplace((" ", ""), ("?", "."), ("*", "."))
     )
