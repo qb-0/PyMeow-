@@ -15,19 +15,8 @@ def main():
     frames, fps = 0, 0
     prev_time = time()
 
-    star_offset = 100
-    star_x = overlay["midX"]
-    star_y = overlay["midY"]
-    star_points = [
-        pm.vec2(star_x, star_y + star_offset),
-        pm.vec2(star_x + star_offset, star_y),
-        pm.vec2(star_x, star_y - star_offset),
-        pm.vec2(star_x - star_offset, star_y),
-    ]
-
     while pm.overlay_loop(overlay):
         sleep(0.001)
-        pm.custom_shape(star_points, pm.rgb("yellow"))
         curr_time = time()
         frames += 1
 
@@ -36,9 +25,8 @@ def main():
             frames = 0
             prev_time = curr_time
 
-        pm.render_string(
-            overlay["midX"], overlay["midY"], f"FPS: {fps}", [b, r, g], True
-        )
+        pm.poly(overlay["midX"], overlay["midY"], 100, 0, 6, pm.rgb("aqua"))
+        pm.render_string(overlay["midX"], overlay["midY"], f"FPS: {fps}", [b, r, g], True)
 
         if ball_left:
             if x > overlay["width"] - radius:
