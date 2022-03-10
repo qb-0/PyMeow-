@@ -6,6 +6,16 @@ pyExportModule("pymeow")
 
 type Rgb = array[0..2, float32]
 
+proc pixel(x, y: float, color: Rgb) {.exportpy.} =
+  glBegin(GL_LINES)
+  glColor3f(color[0], color[1], color[2])
+  glVertex2f(x, y)
+  glVertex2f(x + 1, y + 1)
+  glEnd()
+
+proc pixelV(pos: Vec2, color: Rgb) {.exportpy: "pixel_v".} =
+  pixel(pos.x, pos.y, color)
+
 proc box(x, y, width, height, lineWidth: float, color: Rgb) {.exportpy.} =
   glLineWidth(lineWidth)
   glBegin(GL_LINE_LOOP)
@@ -140,6 +150,29 @@ proc valueBar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = tr
 
 proc valueBarV(pos1, pos2: Vec2, width, maxValue, value: float, vertical: bool = true) {.exportpy: "value_bar_v".} =
   valueBar(pos1.x, pos1.y, pos2.x, pos2.y, width, maxValue, value, vertical)
+
+proc poly(x, y, radius, rotation: float, sides: int, color: Rgb) {.exportpy.} =
+  # Credits to RayLib
+  var 
+    s = if sides <= 3: 3.0 else: sides.float
+    centralAngle = 0.0
+  
+  glPushMatrix()
+  glTranslatef(x, y, 0.0)
+  glRotatef(rotation, 0.0, 0.0, 1.0)
+
+  glBegin(GL_TRIANGLES)
+  for _ in 0..sides:
+    glColor3f(color[0], color[1], color[2])
+    glVertex2f(0, 0)
+    glVertex2f(sin(degToRad(centralAngle)) * radius, cos(degToRad(centralAngle)) * radius)
+    centralAngle += 360.0 / s
+    glVertex2f(sin(degToRad(centralAngle)) * radius, cos(degToRad(centralAngle)) * radius)
+  glEnd()
+  glPopMatrix()
+
+proc polyV(pos: Vec2, radius, rotation: float, sides: int, color: Rgb) {.exportpy: "poly_v".} =
+  poly(pos.x, pos.y, radius, rotation, sides, color)
 
 proc customShape(points: openArray[Vec2], color: Rgb, filled: bool = true, alpha: float = 1.0) {.exportpy: "custom_shape".} =
   if filled: glBegin(GL_POLYGON)

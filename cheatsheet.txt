@@ -69,6 +69,8 @@ font_deinit(Font)
 font_print(Font, x, y: float, text: string, color: rgb array)
 font_print_lines(Font, x, y: float, lines: string array, color: rgb array, offset: float = 2)
 
+pixel(x, y, color: rgb array)
+pixel_v(pos: Vec2, color: rgb array)
 box(x, y, width, height, lineWidth: float, color: rgb array)
 box_v(pos: Vec2, width, height, lineWidth: float, color: rgb array)
 alpha_box(x, y, width, height: float, color, outlineColor: rgb array, alpha: float)
@@ -85,6 +87,8 @@ rad_circle(x, y, radius: float, value: int, color: rgb array)
 rad_circle_v(pos: Vec2, radius: float, value: int, color: rgb array)
 value_bar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = true)
 value_bar_v(pos1, pos2: Vec2, width, maxValue, value: float, vertical: bool = true)
+poly(x, y, radius, rotation: float, sides: int, color: rgb array)
+poly_v(pos: Vec2, radius, rotation: float, sides: int, color rgb array) 
 custom_shape(points: Vec2 array, color: rgb array, filled: bool = true, alpha: float = 1.0)
 
 ################################################################################################################
