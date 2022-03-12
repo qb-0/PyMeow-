@@ -2,6 +2,7 @@ import pymeow as pm
 
 from math import fmod
 from time import time, sleep
+from random import randint
 
 
 def main():
