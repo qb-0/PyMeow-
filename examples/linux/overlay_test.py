@@ -2,6 +2,7 @@ import pymeow as pm
 
 from math import fmod
 from time import time, sleep
+from random import randint
 
 
 def main():
@@ -14,6 +15,15 @@ def main():
 
     frames, fps = 0, 0
     prev_time = time()
+    stars = list()
+    for _ in range(300):
+        stars.append(
+            pm.vec2(
+                randint(0, overlay["width"]),
+                randint(0, overlay["height"])
+            )
+        )
+
 
     while pm.overlay_loop(overlay):
         sleep(0.001)
@@ -24,7 +34,8 @@ def main():
             fps = frames
             frames = 0
             prev_time = curr_time
-
+        
+        [pm.pixel_v(vec, pm.rgb("white")) for vec in stars]
         pm.poly(overlay["midX"], overlay["midY"], 100, 0, 6, pm.rgb("aqua"))
         pm.render_string(overlay["midX"], overlay["midY"], f"FPS: {fps}", [b, r, g], True)
 
