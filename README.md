@@ -6,7 +6,7 @@
 ##### <ins>Installation / Usage</ins>
 - Make sure you use a **64bit** version of Python 3
 - Download the latest PyMeow Module from the ![Release Section](https://github.com/qb-0/PyMeow/releases)
-- Extract the files and use pip to install PyMeow (pip install .)
+- Extract the files and use pip to install PyMeow: `pip install .`
 
 ##### <ins>Compiling</ins>
 - Download and install [nim](https://nim-lang.org/install.html) and [git for windows](https://gitforwindows.org/)
