@@ -18,6 +18,7 @@ type
     basesize: int
     modules: Table[string, Module]
     debug: bool
+    platform: int
 
 proc pidInfo(pid: int32): Process =
   var 
@@ -46,10 +47,23 @@ proc pidInfo(pid: int32): Process =
       )
       result.modules[nullTerminated($$me.szModule)] = m
 
+proc processPlatform(a: Process): int {.exportpy: "process_platform".} =
+  if a.handle == 0:
+    raise newException(Exception, "Unable to determite process platform (no open handle)")
+  var systemInfo: SYSTEM_INFO
+  GetNativeSystemInfo(systemInfo.addr)
+  if systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL:
+    return 32
+  var isWow: BOOL
+  if IsWow64Process(a.handle, isWow.addr) == FALSE:
+    raise newException(Exception, fmt"process_platform failed [Error: {GetLastError()}]")
+  if isWow == TRUE: 32 else: 64
+
 proc processByPid(pid: int32, debug: bool = false, rights: int32 = PROCESS_ALL_ACCESS): Process {.exportpy: "process_by_pid".} =
   result = pidInfo(pid)
   result.handle = OpenProcess(rights, 1, pid).int32
   result.debug = debug
+  result.platform = processPlatform(result)
   if result.handle == FALSE:
     raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
 
@@ -65,6 +79,7 @@ proc processByName(name: string, debug: bool = false, rights: int32 = PROCESS_AL
       p.handle = OpenProcess(rights, 1, p.pid).int32
       p.debug = debug
       if p.handle != 0:
+        p.platform = processPlatform(p)
         return p
       raise newException(Exception, fmt"Unable to open Process [Pid: {p.pid}] [Error code: {GetLastError()}]")
   raise newException(Exception, fmt"Process '{name}' not found")
@@ -183,15 +198,3 @@ proc pageProtection(a: Process, address: ByteAddress, newProtection: int32 = 0x4
   var mbi = MEMORY_BASIC_INFORMATION()
   discard VirtualQueryEx(a.handle, cast[LPCVOID](address), mbi.addr, sizeof(mbi).SIZE_T)
   discard VirtualProtectEx(a.handle, cast[LPCVOID](address), mbi.RegionSize, newProtection, result.addr)
-
-proc processPlatform(a: Process): int {.exportpy: "process_platform".} =
-  if a.handle == 0:
-    raise newException(Exception, "Unable to determite process platform (no open handle)")
-  var systemInfo: SYSTEM_INFO
-  GetNativeSystemInfo(systemInfo.addr)
-  if systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL:
-    return 32
-  var isWow: BOOL
-  if IsWow64Process(a.handle, isWow.addr) == FALSE:
-    raise newException(Exception, fmt"process_platform failed [Error: {GetLastError()}]")
-  if isWow == TRUE: 32 else: 64
