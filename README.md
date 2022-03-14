@@ -1,4 +1,4 @@
-## PyMeow ([Discord](https://discord.gg/pUGxsAUj))
+## PyMeow ([Discord](https://discord.gg/B34S4aMYqY)
 #### Cross platform (Windows / Linux) Python Library for external Game Hacking
 
 #### [Windows Cheatsheet / Features](https://github.com/qb-0/PyMeow/blob/master/cheatsheet.txt)
