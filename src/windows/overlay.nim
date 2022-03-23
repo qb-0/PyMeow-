@@ -86,6 +86,12 @@ proc loop(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
     a.update()
   not OverlayWindow.windowShouldClose()
 
+proc hide(a: Overlay, hide: bool = true) {.exportpy: "overlay_hide".} =
+  if hide:
+    OverlayWindow.hideWindow()
+  else:
+    OverlayWindow.showWindow()
+
 proc setPos(a: Overlay, x, y: int32) {.exportpy: "overlay_set_pos".} =
   SetWindowPos(a.hwnd, -1, x, y, 0, 0, 0x0001)
 

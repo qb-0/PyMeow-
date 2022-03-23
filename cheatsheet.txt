@@ -60,6 +60,7 @@ overlay_close(Overlay)
 overlay_deinit()
 overlay_loop(Overlay, update: bool = true) -> bool
 overlay_set_pos(Overlay, x, y: int)
+overlay_hide(Overlay, hide: bool = true)
 
 ################################################################################################################
 Drawing

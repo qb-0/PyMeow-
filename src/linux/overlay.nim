@@ -104,6 +104,12 @@ proc loop*(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
     a.close()
   not OverlayWindow.windowShouldClose()
 
+proc hide(a: Overlay, hide: bool = true) {.exportpy: "overlay_hide".} =
+  if hide:
+    OverlayWindow.hideWindow()
+  else:
+    OverlayWindow.showWindow()
+
 template getFontPtr: pointer =
   case font
   of 0:
