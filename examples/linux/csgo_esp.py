@@ -1,10 +1,11 @@
 from pymeow import *
+from time import sleep
 
 
 class Offsets:
-    dwLocalPlayer = 0x22db650
-    dwEntityList = 0x230bb08 
-    dwViewMatrix = 0x22dfac4
+    dwLocalPlayer = 0x22dd650
+    dwEntityList = 0x230db08
+    dwViewMatrix = 0x22e1ac4
 
     m_nForceBone = 0x2c54
     m_vecOrigin = 0x170
@@ -111,6 +112,7 @@ def main():
     overlay = overlay_init(target="Counter-Strike: Global Offensive - OpenGL")
 
     while overlay_loop(overlay):
+        sleep(0.0005)
         local_addr = read_int64(mem, client_base + Offsets.dwLocalPlayer)
         if local_addr > 0:
             vm = read_floats(mem, client_base + Offsets.dwViewMatrix, 16)
