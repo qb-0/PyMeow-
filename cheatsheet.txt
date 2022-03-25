@@ -58,7 +58,7 @@ Overlay
 overlay_init(target: string = "Fullscreen", exitKey: int = 0x23 (END), borderOffset: int = 25) -> Overlay
 overlay_close(Overlay)
 overlay_deinit()
-overlay_loop(Overlay, update: bool = true, sleepTime: int = 0) -> bool
+overlay_loop(Overlay, update: bool = true, delay: int = 0) -> bool
 overlay_set_pos(Overlay, x, y: int)
 overlay_hide(Overlay, hide: bool = true)
 
