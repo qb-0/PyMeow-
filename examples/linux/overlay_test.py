@@ -1,7 +1,7 @@
 import pymeow as pm
 
 from math import fmod
-from time import time, sleep
+from time import time
 from random import randint
 
 
@@ -26,7 +26,6 @@ def main():
 
 
     while pm.overlay_loop(overlay):
-        sleep(0.001)
         curr_time = time()
         frames += 1
 

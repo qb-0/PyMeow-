@@ -1,5 +1,5 @@
 import 
-  strutils, math, osproc,
+  strutils, math, osproc, os,
   nimgl/[glfw, opengl], opengl/glut,
   nimpy, misc, x11/keysym
 
@@ -97,7 +97,8 @@ proc deinit*(a: Overlay) {.exportpy: "overlay_deinit".} =
 proc close*(a: Overlay) {.exportpy: "overlay_close".} = 
   OverlayWindow.setWindowShouldClose(true) 
 
-proc loop*(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
+proc loop*(a: Overlay, update: bool = true, sleepTime: int = 1): bool {.exportpy: "overlay_loop".} =
+  sleep(sleepTime)
   if update: 
     a.update()
   if keyPressed(a.exitKey): 

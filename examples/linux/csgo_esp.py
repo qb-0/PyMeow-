@@ -112,7 +112,6 @@ def main():
     overlay = overlay_init(target="Counter-Strike: Global Offensive - OpenGL")
 
     while overlay_loop(overlay):
-        sleep(0.0005)
         local_addr = read_int64(mem, client_base + Offsets.dwLocalPlayer)
         if local_addr > 0:
             vm = read_floats(mem, client_base + Offsets.dwViewMatrix, 16)

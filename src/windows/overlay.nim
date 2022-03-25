@@ -1,5 +1,5 @@
 import
-  nimpy, winim,
+  nimpy, winim, os,
   nimgl/[glfw, glfw/native, opengl]
 from strformat import fmt
 
@@ -79,7 +79,8 @@ proc deinit(a: Overlay) {.exportpy: "overlay_deinit".} =
 proc close(a: Overlay) {.exportpy: "overlay_close".} = 
   OverlayWindow.setWindowShouldClose(true)
 
-proc loop(a: Overlay, update: bool = true): bool {.exportpy: "overlay_loop".} =
+proc loop(a: Overlay, update: bool = true, sleepTime: int = 0): bool {.exportpy: "overlay_loop".} =
+  sleep(sleepTime)
   if GetAsyncKeyState(a.exitKey).bool:
     a.close()
   if update:
