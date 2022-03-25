@@ -1,5 +1,4 @@
 from pymeow import *
-from time import sleep
 
 
 class Offsets:
