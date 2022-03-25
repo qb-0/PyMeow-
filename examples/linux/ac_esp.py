@@ -1,4 +1,3 @@
-from threading import local
 from pymeow import *
 
 DEBUG = True
