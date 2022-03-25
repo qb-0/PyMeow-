@@ -27,7 +27,7 @@ proc pidInfo(pid: int32): Process =
 
   defer: CloseHandle(snap)
 
-  if Module32First(snap, me.addr) == 1:
+  if Module32First(snap, me.addr) == TRUE:
     result = Process(
       name: nullTerminated($$me.szModule),
       pid: me.th32ProcessID,
