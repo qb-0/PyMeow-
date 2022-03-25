@@ -3,6 +3,7 @@ from pymeow import *
 
 DEBUG = True
 
+
 class Pointer:
     entity_list = 0x1A2520
     local_player = 0x1A2518
@@ -48,7 +49,7 @@ class Entity:
             self.pos2d["x"] - 10,
             self.pos2d["y"],
             1.5,
-            self.color
+            self.color,
         )
 
     def render_circle(self):

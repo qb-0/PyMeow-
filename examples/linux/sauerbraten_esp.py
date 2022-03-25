@@ -85,11 +85,17 @@ class Entity:
             self.hpos2d["x"] - 10,
             self.hpos2d["y"],
             1.5,
-            self.color
+            self.color,
         )
 
     def draw_info(self):
-        render_string(self.hpos2d["x"], self.hpos2d["y"] + 20, f"{self.name} ({self.distance})", rgb("white"), True)
+        render_string(
+            self.hpos2d["x"],
+            self.hpos2d["y"] + 20,
+            f"{self.name} ({self.distance})",
+            rgb("white"),
+            True,
+        )
 
 
 def get_ents():

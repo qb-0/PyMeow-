@@ -2,11 +2,11 @@ from pymeow import *
 
 
 class Offsets:
-    dwLocalPlayer = 0x22dd650
-    dwEntityList = 0x230db08
-    dwViewMatrix = 0x22e1ac4
+    dwLocalPlayer = 0x22DD650
+    dwEntityList = 0x230DB08
+    dwViewMatrix = 0x22E1AC4
 
-    m_nForceBone = 0x2c54
+    m_nForceBone = 0x2C54
     m_vecOrigin = 0x170
     m_bDormant = 0x125
     m_iHealth = 0x138
@@ -29,8 +29,13 @@ class Entity:
         self.ov = ov
 
         self.head_pos3D = vec3()
-        self.dormant = self.health = self.team = self.color = self.bone_matrix \
-            = self.pos3D = self.pos2D = self.head_pos2D = None
+        self.dormant = (
+            self.health
+        ) = (
+            self.team
+        ) = (
+            self.color
+        ) = self.bone_matrix = self.pos3D = self.pos2D = self.head_pos2D = None
 
     def update(self):
         self.dormant = read_bool(self.mem, self.addr + Offsets.m_bDormant)
@@ -67,7 +72,7 @@ class Entity:
             width,
             head + 5,
             self.color,
-            Colors.black
+            Colors.black,
         )
 
     def render_health(self):
@@ -101,7 +106,7 @@ class Entity:
             self.head_pos2D["y"],
             1,
             self.color,
-            pattern="10101000111"
+            pattern="10101000111",
         )
 
 

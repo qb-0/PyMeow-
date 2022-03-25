@@ -8,8 +8,9 @@ mem.write(0x0000000005BACD38, "int", 10)
 print(mem.read(0x0000000005BACD38, "int"))
 """
 
+
 class Memory:
-    def __init__(self, process_name, debug = False):
+    def __init__(self, process_name, debug=False):
         self.read_switch = {
             "int": read_int,
             "ints": read_ints,
@@ -30,7 +31,7 @@ class Memory:
             "vec2": read_vec2,
             "vec3": read_vec3,
             "bool": read_bool,
-            "string": read_string
+            "string": read_string,
         }
 
         self.write_switch = {
@@ -57,7 +58,7 @@ class Memory:
         except:
             raise Exception(f"Process {process_name} not found")
 
-    def read(self, addr, type_str, size = 1):
+    def read(self, addr, type_str, size=1):
         type_str = type_str.lower()
         r_proc = self.read_switch.get(type_str, "")
         if not r_proc:

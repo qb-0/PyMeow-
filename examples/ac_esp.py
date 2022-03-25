@@ -2,6 +2,7 @@ from pymeow import *
 
 DEBUG = True
 
+
 class Pointer:
     player_count = 0x187C18
     entity_list = 0x187C10

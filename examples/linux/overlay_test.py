@@ -18,12 +18,8 @@ def main():
     stars = list()
     for _ in range(300):
         stars.append(
-            pm.vec2(
-                randint(0, overlay["width"]),
-                randint(0, overlay["height"])
-            )
+            pm.vec2(randint(0, overlay["width"]), randint(0, overlay["height"]))
         )
-
 
     while pm.overlay_loop(overlay):
         curr_time = time()
@@ -33,10 +29,12 @@ def main():
             fps = frames
             frames = 0
             prev_time = curr_time
-        
+
         [pm.pixel_v(vec, pm.rgb("white")) for vec in stars]
         pm.poly(overlay["midX"], overlay["midY"], 100, 0, 6, pm.rgb("aqua"))
-        pm.render_string(overlay["midX"], overlay["midY"], f"FPS: {fps}", [b, r, g], True)
+        pm.render_string(
+            overlay["midX"], overlay["midY"], f"FPS: {fps}", [b, r, g], True
+        )
 
         if ball_left:
             if x > overlay["width"] - radius:
