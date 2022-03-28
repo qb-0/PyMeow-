@@ -138,21 +138,19 @@ proc readSeq*(a: Process, address: ByteAddress, size: SIZE_T,  t: typedesc = byt
   if a.debug:
     echo "[R] [", type(result), "] 0x", address.toHex(), " -> ", result
 
-proc aobScan(a: Process, pattern: string, module: Module = Module()): ByteAddress {.exportpy: "aob_scan".} =
-  var 
-    scanBegin, scanEnd: int
-    rePattern = re(
-      pattern.toUpper().multiReplace((" ", ""), ("??", "?"), ("?", ".."), ("*", ".."))
-    )
+proc aobScan(a: Process, pattern: string, moduleName: string, relative: bool = false): ByteAddress {.exportpy: "aob_scan".} =
+  var module: Module
+  if moduleName in a.modules:
+    module = a.modules[moduleName]
+  else:
+    raise newException(Exception, fmt"Module {moduleName} not found")
 
-  if module.baseaddr != 0:
+  var 
     scanBegin = module.baseaddr
     scanEnd = module.baseaddr + module.basesize
-  else:
-    var sysInfo = SYSTEM_INFO()
-    GetSystemInfo(sysInfo.addr)
-    scanBegin = cast[int](sysInfo.lpMinimumApplicationAddress)
-    scanEnd = cast[int](sysInfo.lpMaximumApplicationAddress)
+    rePattern = re(
+      pattern.toUpper().multiReplace((" ", ""), ("??", "?"), ("?", ".."))
+    )
 
   var mbi = MEMORY_BASIC_INFORMATION()
   VirtualQueryEx(a.handle, cast[LPCVOID](scanBegin), mbi.addr, sizeof(mbi).SIZE_T)
@@ -172,7 +170,7 @@ proc aobScan(a: Process, pattern: string, module: Module = Module()): ByteAddres
 
     let r = byteString.findAllBounds(rePattern)
     if r.len != 0:
-      return r[0].a div 2 + curAddr
+      return r[0].a div 2 + (if relative: 0 else: curAddr)
 
 proc nopCode(a: Process, address: ByteAddress, length: int = 1) {.exportpy: "nop_code".} =
   var oldProt: int32
