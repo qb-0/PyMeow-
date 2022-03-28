@@ -46,7 +46,7 @@ write_vec3(Process, address: int, data: Vec3)
 write_bool(Process, address: int, data: bool)
 
 pointer_chain(Process, baseAddr: int, offsets: array, size: int = 8) -> int
-aob_scan(Process, pattern: string, module: string) -> int
+aob_scan(Process, pattern: string, module: string, relative: bool = true) -> int
 nop_code(Process, address: int, length: int)
 patch_bytes(Process, address: int, data: byte array)
 inject_library(Process, dllPath: string)
