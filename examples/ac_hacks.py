@@ -37,15 +37,13 @@ def main():
     ammo_dec = aob_scan(
         ac_proc,
         "FF 0E 57 8B 7C 24 14 8D 74 24 28 E8 ? ? ? ? 5F 5E B0 01 5B 8B E5 5D C2 04 00 CC CC CC CC CC CC CC CC CC CC CC CC 55",
-        ac_proc["modules"]["ac_client.exe"],
+        "ac_client.exe",
     )
     if ammo_dec:
         nop_code(ac_proc, ammo_dec, 2)
 
     # Rapid fire
-    rapid_fire = aob_scan(
-        ac_proc, "89 0A 8B 76 14", ac_proc["modules"]["ac_client.exe"]
-    )
+    rapid_fire = aob_scan(ac_proc, "89 0A 8B 76 14", "ac_client.exe")
     if rapid_fire:
         nop_code(ac_proc, rapid_fire, 2)
 
