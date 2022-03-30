@@ -22,7 +22,7 @@ def main():
             pm.vec2(randint(0, overlay["width"]), randint(0, overlay["height"]))
         )
 
-    while pm.overlay_loop(overlay):
+    while pm.overlay_loop(overlay, delay = 3):
         curr_time = time()
         frames += 1
 
