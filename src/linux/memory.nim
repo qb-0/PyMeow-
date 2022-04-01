@@ -1,7 +1,7 @@
 import 
   os, tables, strformat, 
   strutils, sequtils, posix,
-  regex, nimpy
+  nimpy
 
 pyExportModule("pymeow")
 
@@ -156,7 +156,23 @@ proc readSeq*(a: Process, address: ByteAddress, size: int, t: typedesc = byte): 
   if a.debug:
     echo "[R] [", type(result), "] 0x", address.toHex(), " -> ", result
 
-proc aobScan*(a: Process, pattern: string, moduleName: string, relative: bool = false): ByteAddress {.exportpy: "aob_scan".} =
+proc aobScan*(a: Process, pattern, moduleName: string, relative: bool = false): ByteAddress {.exportpy: "aob_scan".} =
+  const
+    wildCardStr = "??"
+    wildCardByte = 200.byte # Not safe
+
+  proc patternToBytes(pattern: string): seq[byte] =
+    var patt = pattern.replace(" ", "")
+    try:
+      for i in countup(0, patt.len-1, 2):
+        let hex = patt[i..i+1]
+        if hex == wildCardStr:
+          result.add(wildCardByte)
+        else:
+          result.add(parseHexInt(hex).byte)
+    except:
+      raise newException(Exception, "Invalid pattern")
+
   var module: Module
   if moduleName in a.modules:
     module = a.modules[moduleName]
@@ -165,19 +181,26 @@ proc aobScan*(a: Process, pattern: string, moduleName: string, relative: bool = 
 
   var
     curAddr = module.baseaddr
-    rePattern = re(
-      pattern.toUpper().multiReplace((" ", ""), ("??", "?"), ("?", ".."))
-    )
+    bytePattern = patternToBytes(pattern)
 
   for r in module.regions:
     if not r.readable:
       curAddr += r.size
       continue
-    let byteString = cast[string](a.readSeq(r.start, r.size)).toHex()
-    let b = byteString.findAllBounds(rePattern)
-    if b.len != 0:
-      return b[0].a div 2 + (if relative: 0 else: curAddr)
+    let regionBytes = a.readSeq(r.start, r.size)
+    var byteHits: int
+    for b in regionBytes:
+      inc result
+      let p = bytePattern[byteHits]
+      if p == wildCardByte or p == b:
+        inc byteHits
+      else:
+        byteHits = 0
+      if byteHits == bytePattern.len:
+        result = result + (if relative: 0 else: curAddr) - bytePattern.len
+        return
     curAddr += r.size
+    result = 0
 
 proc nopCode*(a: Process, address: ByteAddress, length: int = 1) {.exportpy: "nop_code".} =
   for i in 0..length-1:

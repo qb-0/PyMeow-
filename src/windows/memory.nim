@@ -1,6 +1,6 @@
 import 
   os, tables, strutils,
-  winim, nimpy, regex
+  winim, nimpy
 from strformat import fmt
 
 pyExportModule("pymeow")
@@ -138,39 +138,71 @@ proc readSeq*(a: Process, address: ByteAddress, size: SIZE_T,  t: typedesc = byt
   if a.debug:
     echo "[R] [", type(result), "] 0x", address.toHex(), " -> ", result
 
-proc aobScan(a: Process, pattern: string, moduleName: string, relative: bool = false): ByteAddress {.exportpy: "aob_scan".} =
-  var module: Module
-  if moduleName in a.modules:
-    module = a.modules[moduleName]
+proc aobScan(a: Process, pattern: string, moduleName: string = "", relative: bool = false): ByteAddress {.exportpy: "aob_scan".} =
+  const
+    wildCardStr = "??"
+    wildCardByte = 200.byte # Not safe
+
+  proc patternToBytes(pattern: string): seq[byte] =
+    var patt = pattern.replace(" ", "")
+    try:
+      for i in countup(0, patt.len-1, 2):
+        let hex = patt[i..i+1]
+        if hex == wildCardStr:
+          result.add(wildCardByte)
+        else:
+          result.add(parseHexInt(hex).byte)
+    except:
+      raise newException(Exception, "Invalid pattern")
+
+  iterator readPages(start, stop: ByteAddress): (ByteAddress, seq[byte]) =
+    var mbi = MEMORY_BASIC_INFORMATION()
+    VirtualQueryEx(a.handle, cast[LPCVOID](start), mbi.addr, sizeof(mbi).SIZE_T)
+    var curAddr = start
+    while curAddr < stop:
+      curAddr += mbi.RegionSize.int
+      VirtualQueryEx(a.handle, cast[LPCVOID](curAddr), mbi.addr, sizeof(mbi).SIZE_T)
+
+      if mbi.State != MEM_COMMIT or mbi.State == PAGE_NOACCESS: 
+        continue
+
+      var oldProt: int32
+      VirtualProtectEx(a.handle, cast[LPCVOID](curAddr), mbi.RegionSize, PAGE_EXECUTE_READWRITE, oldProt.addr)
+      let pageBytes = a.readSeq(cast[ByteAddress](mbi.BaseAddress), mbi.RegionSize)
+      VirtualProtectEx(a.handle, cast[LPCVOID](curAddr), mbi.RegionSize, oldProt, nil)
+      yield (curAddr, pageBytes)
+
+  var
+    module: Module
+    scanBegin, scanEnd: ByteAddress
+    bytePattern = patternToBytes(pattern)
+
+  if moduleName != "":
+    if moduleName in a.modules:
+      module = a.modules[moduleName]
+      scanBegin = module.baseaddr
+      scanEnd = module.baseaddr + module.basesize
+    else:
+      raise newException(Exception, fmt"Module {moduleName} not found")
   else:
-    raise newException(Exception, fmt"Module {moduleName} not found")
+    var sysInfo = SYSTEM_INFO()
+    GetSystemInfo(sysInfo.addr)
+    scanBegin = cast[ByteAddress](sysInfo.lpMinimumApplicationAddress)
+    scanEnd = cast[ByteAddress](sysInfo.lpMaximumApplicationAddress)
 
-  var 
-    scanBegin = module.baseaddr
-    scanEnd = module.baseaddr + module.basesize
-    rePattern = re(
-      pattern.toUpper().multiReplace((" ", ""), ("??", "?"), ("?", ".."))
-    )
-
-  var mbi = MEMORY_BASIC_INFORMATION()
-  VirtualQueryEx(a.handle, cast[LPCVOID](scanBegin), mbi.addr, sizeof(mbi).SIZE_T)
-
-  var curAddr = scanBegin
-  while curAddr < scanEnd:
-    curAddr += mbi.RegionSize.int
-    VirtualQueryEx(a.handle, cast[LPCVOID](curAddr), mbi.addr, sizeof(mbi).SIZE_T)
-
-    if mbi.State != MEM_COMMIT or mbi.State == PAGE_NOACCESS: 
-      continue
-
-    var oldProt: int32
-    VirtualProtectEx(a.handle, cast[LPCVOID](curAddr), mbi.RegionSize, PAGE_EXECUTE_READWRITE, oldProt.addr)
-    let byteString = cast[string](a.readSeq(cast[ByteAddress](mbi.BaseAddress), mbi.RegionSize)).toHex()
-    VirtualProtectEx(a.handle, cast[LPCVOID](curAddr), mbi.RegionSize, oldProt, nil)
-
-    let r = byteString.findAllBounds(rePattern)
-    if r.len != 0:
-      return r[0].a div 2 + (if relative: 0 else: curAddr)
+  for curAddr, page in readPages(scanBegin, scanEnd):
+    var byteHits: int
+    for b in page:
+      inc result
+      let p = bytePattern[byteHits]
+      if p == wildCardByte or p == b:
+        inc byteHits
+      else:
+        byteHits = 0
+      if byteHits == bytePattern.len:
+        result = result + (if relative: 0 else: curAddr) - bytePattern.len
+        return
+    result = 0
 
 proc nopCode(a: Process, address: ByteAddress, length: int = 1) {.exportpy: "nop_code".} =
   var oldProt: int32
