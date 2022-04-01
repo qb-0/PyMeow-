@@ -36,7 +36,7 @@ def main():
     # No decrement of ammo
     ammo_dec = aob_scan(
         ac_proc,
-        "FF 0E 57 8B 7C 24 14 8D 74 24 28 E8 ? ? ? ? 5F 5E B0 01 5B 8B E5 5D C2 04 00 CC CC CC CC CC CC CC CC CC CC CC CC 55",
+        "FF 0E 57 8B 7C 24 14 8D 74 24 28 E8 ?? ?? ?? ?? 5F 5E B0 01 5B 8B E5 5D C2 04 00 CC CC CC CC CC CC CC CC CC CC CC CC 55",
         "ac_client.exe",
     )
     if ammo_dec:
