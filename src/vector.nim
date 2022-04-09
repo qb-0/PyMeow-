@@ -54,26 +54,26 @@ proc vec3MagSq(a: Vec3): float32 {.exportpy: "vec3_magSq".} =
   (a.x * a.x) + (a.y * a.y) + (a.z * a.z)
 
 proc vec2Mag(a: Vec2): float32 {.exportpy: "vec2_mag".} =
-  sqrt(a.vec2_magSq())
+  sqrt(a.vec2MagSq())
 proc vec3Mag(a: Vec3): float32 {.exportpy: "vec3_mag".} =
-  sqrt(a.vec3_magSq())
+  sqrt(a.vec3MagSq())
 
 proc vec2Distance(a, b: Vec2): float32 {.exportpy: "vec2_distance".} =
-  vec2_mag(vec2_sub(a, b))
+  vec2Mag(vec2Sub(a, b))
 proc vec3Distance(a, b: Vec3): float32 {.exportpy: "vec3_distance".} =
-  vec3_mag(vec3_sub(a, b))
+  vec3Mag(vec3Sub(a, b))
 
 proc vec2Closest(a: Vec2, b: varargs[Vec2]): Vec2 {.exportpy: "vec2_closest".} =
   var closest_value = float32.high
   for v in b:
-    let dist = a.vec2_distance(v)
+    let dist = a.vec2Distance(v)
     if dist < closest_value:
       result = v
       closest_value = dist
 proc vec3Closest(a: Vec3, b: varargs[Vec3]): Vec3 {.exportpy: "vec3_closest".} =
   var closest_value = float32.high
   for v in b:
-    let dist = a.vec3_distance(v)
-    if a.vec3_distance(v) < closest_value:
+    let dist = a.vec3Distance(v)
+    if a.vec3Distance(v) < closest_value:
       result = v
       closest_value = dist
