@@ -87,8 +87,9 @@ proc loop(a: Overlay, update: bool = true, delay: int = 0): bool {.exportpy: "ov
     a.update()
   not OverlayWindow.windowShouldClose()
 
-proc hide(a: Overlay, hide: bool = true) {.exportpy: "overlay_hide".} =
-  if hide:
+proc hide(a: Overlay) {.exportpy: "overlay_hide".} =
+  let visible = OverlayWindow.getWindowAttrib(GLFWVisible)
+  if visible == GLFWTrue:
     OverlayWindow.hideWindow()
   else:
     OverlayWindow.showWindow()
