@@ -22,7 +22,25 @@ def main():
             pm.vec2(randint(0, overlay["width"]), randint(0, overlay["height"]))
         )
 
+    print(
+        """
+        Exit with       [END]
+        Hide/Show with  [BACKSPACE]
+        Speedup with    [+]
+        Slowdown with   [-]
+        """
+    )
+
     while pm.overlay_loop(overlay, delay = 3):
+        if pm.key_pressed(0x08):
+            pm.overlay_hide(overlay)
+            sleep(0.2)
+        elif pm.key_pressed(0xBB):
+            speed += 0.2
+        elif pm.key_pressed(0xBD):
+            if speed > 0.2:
+                speed -= 0.2
+
         curr_time = time()
         frames += 1
 

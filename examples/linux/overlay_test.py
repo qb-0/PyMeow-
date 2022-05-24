@@ -1,7 +1,7 @@
 import pymeow as pm
 
 from math import fmod
-from time import time
+from time import time, sleep
 from random import randint
 
 
@@ -21,7 +21,25 @@ def main():
             pm.vec2(randint(0, overlay["width"]), randint(0, overlay["height"]))
         )
 
+    print(
+        """
+        Exit with       [END]
+        Hide/Show with  [BACKSPACE]
+        Speedup with    [+]
+        Slowdown with   [-]
+        """
+    )
+
     while pm.overlay_loop(overlay):
+        if pm.key_pressed(0xff08):
+            pm.overlay_hide(overlay)
+            sleep(0.2)
+        elif pm.key_pressed(0x002b):
+            speed += 0.2
+        elif pm.key_pressed(0x002d):
+            if speed > 0.2:
+                speed -= 0.2
+
         curr_time = time()
         frames += 1
 
