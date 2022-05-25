@@ -112,6 +112,9 @@ proc hide(a: Overlay) {.exportpy: "overlay_hide".} =
   else:
     OverlayWindow.showWindow()
 
+proc setTitle(a: Overlay, title: string) {.exportpy: "overlay_set_title".} =
+  OverlayWindow.setWindowTitle(title)
+
 template getFontPtr: pointer =
   case font
   of 0:

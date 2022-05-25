@@ -94,6 +94,9 @@ proc hide(a: Overlay) {.exportpy: "overlay_hide".} =
   else:
     OverlayWindow.showWindow()
 
+proc setTitle(a: Overlay, title: string) {.exportpy: "overlay_set_title".} =
+  OverlayWindow.setWindowTitle(title)
+
 proc setPos(a: Overlay, x, y: int32) {.exportpy: "overlay_set_pos".} =
   SetWindowPos(a.hwnd, -1, x, y, 0, 0, 0x0001)
 
