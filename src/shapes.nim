@@ -174,6 +174,23 @@ proc poly(x, y, radius, rotation: float, sides: int, color: Rgb) {.exportpy.} =
 proc polyV(pos: Vec2, radius, rotation: float, sides: int, color: Rgb) {.exportpy: "poly_v".} =
   poly(pos.x, pos.y, radius, rotation, sides, color)
 
+proc ellipse(x, y, radiusH, radiusV: float, color: Rgb, filled: bool = false, alpha: float = 1.0) {.exportpy: "ellipse".} =
+  if filled:
+    glBegin(GL_TRIANGLES)
+  else:
+    glBegin(GL_LINES)
+
+  for i in countUp(0, 350, 10):
+    glColor4f(color[0], color[1], color[2], alpha)
+    if filled:
+      glVertex2f(x, y)
+    glVertex2f(x + sin(degToRad(i.float)) * radiusH, y + cos(degToRad(i.float)) * radiusV)
+    glVertex2f(x + sin(degToRad(i.float + 10)) * radiusH, y + cos(degToRad(i.float + 10)) * radiusV)
+  glEnd()
+
+proc ellipseV(pos: Vec2, radiusH, radiusV: float, color: Rgb, filled: bool = false, alpha: float = 1.0) {.exportpy: "ellipse_v".} =
+  ellipse(pos.x, pos.y, radiusH, radiusV, color, filled, alpha)
+
 proc customShape(points: openArray[Vec2], color: Rgb, filled: bool = true, alpha: float = 1.0) {.exportpy: "custom_shape".} =
   if filled: glBegin(GL_POLYGON)
   else: glBegin(GL_LINE_LOOP)
