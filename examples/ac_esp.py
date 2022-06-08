@@ -2,12 +2,12 @@ from pymeow import *
 
 DEBUG = True
 
-
+# Version: 2021-12-04: AssaultCube 1.3 Lockdown-Edition
 class Pointer:
-    player_count = 0x187C18
-    entity_list = 0x187C10
-    local_player = 0x187C0C
-    view_matrix = 0x17AFE0
+    player_count = 0x18AC0C
+    entity_list = 0x18AC04
+    local_player = 0x18AC00
+    view_matrix = 0x17DFD0
 
 
 class Offsets:
