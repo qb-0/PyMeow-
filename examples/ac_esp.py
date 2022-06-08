@@ -2,7 +2,7 @@ from pymeow import *
 
 DEBUG = True
 
-# Version: 2021-12-04: AssaultCube 1.3 Lockdown-Edition
+# Version: 1.3.0.2
 class Pointer:
     player_count = 0x18AC0C
     entity_list = 0x18AC04
