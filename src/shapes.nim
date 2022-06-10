@@ -6,15 +6,16 @@ pyExportModule("pymeow")
 
 type Rgb = array[0..2, float32]
 
-proc pixel(x, y: float, color: Rgb) {.exportpy.} =
+proc pixel(x, y: float, color: Rgb, thickness: float = 1.0) {.exportpy.} =
+  glLineWidth(thickness)
   glBegin(GL_LINES)
   glColor3f(color[0], color[1], color[2])
   glVertex2f(x, y)
   glVertex2f(x + 1, y + 1)
   glEnd()
 
-proc pixelV(pos: Vec2, color: Rgb) {.exportpy: "pixel_v".} =
-  pixel(pos.x, pos.y, color)
+proc pixelV(pos: Vec2, color: Rgb, thickness: float = 1.0) {.exportpy: "pixel_v".} =
+  pixel(pos.x, pos.y, color, thickness)
 
 proc box(x, y, width, height, lineWidth: float, color: Rgb) {.exportpy.} =
   glLineWidth(lineWidth)
