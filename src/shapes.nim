@@ -103,7 +103,8 @@ proc dashedLine(x1, y1, x2, y2, lineWidth: float, color: Rgb, factor: int32 = 2,
 proc dashedLineV(pos1, pos2: Vec2, lineWidth: float, color: Rgb, factor: int32 = 2, pattern: string = "11111110000", alpha: float32 = 0.5) {.exportpy: "dashed_line_v".} =
   dashedLine(pos1.x, pos1.y, pos2.x, pos2.y, lineWidth, color, factor, pattern, alpha)
 
-proc circle(x, y, radius: float, color: Rgb, filled: bool = true) {.exportpy.} =
+proc circle(x, y, radius: float, color: Rgb, filled: bool = false, lineWidth: float = 1.0) {.exportpy.} =
+  glLineWidth(lineWidth)
   if filled: glBegin(GL_POLYGON)
   else: glBegin(GL_LINE_LOOP)
 
@@ -115,8 +116,8 @@ proc circle(x, y, radius: float, color: Rgb, filled: bool = true) {.exportpy.} =
     )
   glEnd()
 
-proc circleV(pos: Vec2, radius: float, color: Rgb, filled: bool = true) {.exportpy: "circle_v".} =
-  circle(pos.x, pos.y, radius, color, filled)
+proc circleV(pos: Vec2, radius: float, color: Rgb, filled: bool = false, lineWidth: float = 1.0) {.exportpy: "circle_v".} =
+  circle(pos.x, pos.y, radius, color, filled, lineWidth)
 
 proc radCircle(x, y, radius: float, value: int, color: Rgb) {.exportpy: "rad_circle".} =
   glBegin(GL_POLYGON)
@@ -174,7 +175,8 @@ proc poly(x, y, radius, rotation: float, sides: int, color: Rgb) {.exportpy.} =
 proc polyV(pos: Vec2, radius, rotation: float, sides: int, color: Rgb) {.exportpy: "poly_v".} =
   poly(pos.x, pos.y, radius, rotation, sides, color)
 
-proc ellipse(x, y, radiusH, radiusV: float, color: Rgb, filled: bool = false, alpha: float = 1.0) {.exportpy: "ellipse".} =
+proc ellipse(x, y, radiusH, radiusV: float, color: Rgb, filled: bool = false, lineWidth: float = 1.0, alpha: float = 1.0) {.exportpy: "ellipse".} =
+  glLineWidth(lineWidth)
   if filled:
     glBegin(GL_TRIANGLES)
   else:
@@ -188,8 +190,8 @@ proc ellipse(x, y, radiusH, radiusV: float, color: Rgb, filled: bool = false, al
     glVertex2f(x + sin(degToRad(i.float + 10)) * radiusH, y + cos(degToRad(i.float + 10)) * radiusV)
   glEnd()
 
-proc ellipseV(pos: Vec2, radiusH, radiusV: float, color: Rgb, filled: bool = false, alpha: float = 1.0) {.exportpy: "ellipse_v".} =
-  ellipse(pos.x, pos.y, radiusH, radiusV, color, filled, alpha)
+proc ellipseV(pos: Vec2, radiusH, radiusV: float, color: Rgb, filled: bool = false, lineWidth: float = 1.0, alpha: float = 1.0) {.exportpy: "ellipse_v".} =
+  ellipse(pos.x, pos.y, radiusH, radiusV, color, filled, lineWidth, alpha)
 
 proc customShape(points: openArray[Vec2], color: Rgb, filled: bool = true, alpha: float = 1.0) {.exportpy: "custom_shape".} =
   if filled: glBegin(GL_POLYGON)

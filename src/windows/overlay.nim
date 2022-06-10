@@ -29,7 +29,7 @@ proc overlayInit(target: string = "Fullscreen", exitKey: int32 = 0x23, borderOff
   glfwWindowHint(GLFWResizable, GLFWFalse)
   glfwWindowHint(GLFWTransparentFramebuffer, GLFWTrue)
   glfwWindowHint(GLFWMouseButtonPassthrough, GLFWTrue)
-  glfwWindowHint(GLFWSamples, 8)
+  glfwWindowHint(GLFWSamples, 10)
 
   result.exitKey = exitKey
   if target == "Fullscreen":
