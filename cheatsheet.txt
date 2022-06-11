@@ -95,6 +95,9 @@ ellipse(x, y, radiusH, radiusV: float, color: Rgb, filled: bool = false, lineWid
 ellipse_v(pos: Vec2, radiusH, radiusV: float, color: Rgb, filled: bool = false, lineWidth: float = 1.0, alpha: float = 1.0)
 custom_shape(points: Vec2 array, color: rgb array, filled: bool = true, alpha: float = 1.0)
 
+load_texture(filePath: string) -> TextureData
+draw_texture(texture: TextureData, x, y, width, height: float)
+
 ################################################################################################################
 Vector
 ################################################################################################################

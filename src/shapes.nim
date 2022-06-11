@@ -8,7 +8,7 @@ pyExportModule("pymeow")
 type 
   Rgb = array[0..2, float32]
 
-  ImageData = object
+  TextureData = object
     id: GLuint
     width, height: int
 
@@ -208,7 +208,7 @@ proc customShape(points: openArray[Vec2], color: Rgb, filled: bool = true, alpha
     glVertex2f(p.x, p.y)
   glEnd()
 
-proc loadTexture(filePath: string): ImageData {.exportpy: "load_texture".} =
+proc loadTexture(filePath: string): TextureData {.exportpy: "load_texture".} =
   var image: Image
   try:
     image = readImage(filePath)
@@ -228,11 +228,10 @@ proc loadTexture(filePath: string): ImageData {.exportpy: "load_texture".} =
   result.height = image.height
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8.GLint, image.width.GLsizei, image.height.GLsizei, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data[0].addr)
 
-proc drawTexture(texture: Gluint, x, y, width, height: float) {.exportpy: "draw_texture".} =
+proc drawTexture(texture: TextureData, x, y, width, height: float) {.exportpy: "draw_texture".} =
   glEnable(GL_TEXTURE_2D)
-  glBindTexture(GL_TEXTURE_2D, texture)
+  glBindTexture(GL_TEXTURE_2D, texture.id)
   glBegin(GL_QUADS)
-
   glTexCoord2f(0, 0)
   glVertex2f(x, y + height)
   glTexCoord2f(1, 0)
@@ -241,6 +240,5 @@ proc drawTexture(texture: Gluint, x, y, width, height: float) {.exportpy: "draw_
   glVertex2f(x + width, y)
   glTexCoord2f(0, 1)
   glVertex2f(x, y)
-
   glEnd()
   glDisable(GL_TEXTURE_2D)
