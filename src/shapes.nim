@@ -233,6 +233,7 @@ proc drawTexture(texture: TextureData, x, y, width, height: float) {.exportpy: "
   glBindTexture(GL_TEXTURE_2D, texture.id)
   glBegin(GL_QUADS)
   glTexCoord2f(0, 0)
+  glColor3f(1, 1, 1)
   glVertex2f(x, y + height)
   glTexCoord2f(1, 0)
   glVertex2f(x + width, y + height)
