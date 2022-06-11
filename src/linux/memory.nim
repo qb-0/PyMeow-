@@ -64,7 +64,10 @@ proc processByPid(pid: Pid, debug: bool = false): Process {.exportpy: "process_b
     result.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
     result.pid = pid
     result.modules = getModules(pid)
-    result.baseaddr = result.modules[result.name].baseaddr
+    try:
+      result.baseaddr = result.modules[result.name].baseaddr
+    except:
+      discard
     result.debug = debug
   except IOError:
     raise newException(IOError, fmt"Pid ({pid}) does not exist")
@@ -80,7 +83,10 @@ proc processByName(name: string, debug: bool = false): Process {.exportpy: "proc
         result.name = procName
         result.pid = pid.Pid
         result.modules = getModules(pid.Pid)
-        result.baseaddr = result.modules[result.name].baseaddr
+        try:
+          result.baseaddr = result.modules[result.name].baseaddr
+        except KeyError:
+          discard
         result.debug = debug
         return
   raise newException(IOError, fmt"Process not found ({name})")
@@ -99,7 +105,10 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
       r.name = readLines(fmt"/proc/{pid}/status", 1)[0].split()[1]
       r.pid = pid.Pid
       r.modules = getModules(pid.Pid)
-      r.baseaddr = r.modules[r.name].baseaddr
+      try:
+        r.baseaddr = r.modules[r.name].baseaddr
+      except KeyError:
+        discard
       yield r
     except:
       continue
