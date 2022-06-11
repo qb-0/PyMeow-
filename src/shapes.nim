@@ -229,11 +229,11 @@ proc loadTexture(filePath: string): TextureData {.exportpy: "load_texture".} =
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8.GLint, image.width.GLsizei, image.height.GLsizei, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data[0].addr)
 
 proc drawTexture(texture: TextureData, x, y, width, height: float) {.exportpy: "draw_texture".} =
-  glEnable(GL_TEXTURE_2D)
+  glEnable(GL_TEXTURE_2D) 
   glBindTexture(GL_TEXTURE_2D, texture.id)
   glBegin(GL_QUADS)
-  glTexCoord2f(0, 0)
   glColor3f(1, 1, 1)
+  glTexCoord2f(0, 0)
   glVertex2f(x, y + height)
   glTexCoord2f(1, 0)
   glVertex2f(x + width, y + height)
