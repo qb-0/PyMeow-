@@ -1,10 +1,16 @@
 import 
   nimpy, nimgl/opengl, vector, 
   math, strutils
+from pixie import Image, readImage
 
 pyExportModule("pymeow")
 
-type Rgb = array[0..2, float32]
+type 
+  Rgb = array[0..2, float32]
+
+  ImageData = object
+    id: GLuint
+    width, height: int
 
 proc pixel(x, y: float, color: Rgb, thickness: float = 1.0) {.exportpy.} =
   glLineWidth(thickness)
@@ -201,3 +207,40 @@ proc customShape(points: openArray[Vec2], color: Rgb, filled: bool = true, alpha
   for p in points:
     glVertex2f(p.x, p.y)
   glEnd()
+
+proc loadTexture(filePath: string): ImageData {.exportpy: "load_texture".} =
+  var image: Image
+  try:
+    image = readImage(filePath)
+  except:
+    raise newException(Exception, getCurrentExceptionMsg())
+
+  glGenTextures(1, result.id.addr)
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+  glBindTexture(GL_TEXTURE_2D, result.id)
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST.GLfloat)
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST.GLfloat)
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE.GLfloat)
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE.GLfloat)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0)
+  result.width = image.width
+  result.height = image.height
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8.GLint, image.width.GLsizei, image.height.GLsizei, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data[0].addr)
+
+proc drawTexture(texture: Gluint, x, y, width, height: float) {.exportpy: "draw_texture".} =
+  glEnable(GL_TEXTURE_2D)
+  glBindTexture(GL_TEXTURE_2D, texture)
+  glBegin(GL_QUADS)
+
+  glTexCoord2f(0, 0)
+  glVertex2f(x, y + height)
+  glTexCoord2f(1, 0)
+  glVertex2f(x + width, y + height)
+  glTexCoord2f(1, 1)
+  glVertex2f(x + width, y)
+  glTexCoord2f(0, 1)
+  glVertex2f(x, y)
+
+  glEnd()
+  glDisable(GL_TEXTURE_2D)
