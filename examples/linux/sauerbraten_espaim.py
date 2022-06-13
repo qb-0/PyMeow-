@@ -1,4 +1,5 @@
 import sys
+from math import atan2, asin, pi
 from pymeow import *
 
 try:
@@ -15,6 +16,7 @@ class Offsets:
     Local = 0x53A600
     PlayerCount = 0x5EDB7C
     ViewMatrix = 0x5D06E0
+    GameMode = 0x52940C
 
     Health = 0x178
     Armor = 0x180
@@ -121,9 +123,42 @@ def get_ents():
                 continue
 
 
+def is_team_game():
+    return read_byte(mem, base + Offsets.GameMode) in [
+        2,
+        4,
+        6,
+        8,
+        10,
+        11,
+        12,
+        17,
+        13,
+        14,
+        18,
+        15,
+        16,
+        19,
+        20,
+        21,
+        22,
+    ]
+
+
+def aim_bot(ent_vecs):
+    src = local.hpos3d
+    dst = vec3_closest(src, ent_vecs)
+
+    angle = vec2()
+    angle["x"] = -atan2(dst["x"] - src["x"], dst["y"] - src["y"]) / pi * 180.0
+    angle["y"] = asin((dst["z"] - src["z"]) / vec3_distance(src, dst)) * (180.0 / pi)
+    write_vec2(mem, local.addr + Offsets.ViewAngles, angle)
+
+
 def main():
     while overlay_loop(overlay):
         vm = read_floats(mem, base + Offsets.ViewMatrix, 16)
+        ent_vecs = list()
         for e in get_ents():
             try:
                 e.set_color()
@@ -135,6 +170,15 @@ def main():
             e.draw_box()
             e.draw_health()
             e.draw_info()
+
+            if is_team_game():
+                if e.team != local.team:
+                    ent_vecs.append(e.hpos3d)
+            else:
+                ent_vecs.append(e.hpos3d)
+            
+        if key_pressed(0x78): #x
+            aim_bot(ent_vecs)
 
 
 if __name__ == "__main__":
