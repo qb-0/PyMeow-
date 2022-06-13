@@ -1,12 +1,12 @@
 from pymeow import *
 
-DEBUG = True
+DEBUG = False
 
 
 class Pointer:
-    entity_list = 0x1A2520
-    local_player = 0x1A2518
-    view_matrix = 0x1B3FBC
+    entity_list = 0x1A3520
+    local_player = 0x1A3518
+    view_matrix = 0x1B4FCC
 
 
 class Offsets:
@@ -78,12 +78,11 @@ def main():
                 if ent_obj.health > 0:
                     try:
                         ent_obj.pos2d = wts_ogl(overlay, matrix, ent_obj.pos3d)
+                        ent_obj.render_snapline(overlay)
+                        ent_obj.render_info(local_ent)
+                        ent_obj.render_circle()
                     except:
                         continue
-
-                    ent_obj.render_snapline(overlay)
-                    ent_obj.render_info(local_ent)
-                    ent_obj.render_circle()
 
     overlay_deinit(overlay)
 
