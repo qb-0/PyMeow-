@@ -1,7 +1,8 @@
+# Version: v1.3.0.2
+
 from pymeow import *
 
-DEBUG = False
-
+DEBUG = True
 
 class Pointer:
     entity_list = 0x1A3520
