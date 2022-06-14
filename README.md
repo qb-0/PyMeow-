@@ -26,9 +26,6 @@ The linux version is still under progress but is ready to use and follows almost
 ## [Assault Cube ESP](https://github.com/qb-0/PyMeow/blob/master/examples/ac_esp.py)
 <img src="https://github.com/qb-0/PyMeow/blob/master/examples/screenshots/ac2_py.png" alt="alt text" width="650" height="450">
 
-## [Assault Cube Mem Hacks](https://github.com/qb-0/PyMeow/blob/master/examples/ac_hacks.py):
-<img src="https://github.com/qb-0/PyMeow/blob/master/examples/screenshots/ac_py.png" alt="alt text" width="650" height="450">
-
 ## [SWBF2 ESP](https://github.com/qb-0/PyMeow/blob/master/examples/swbf2_esp.py)
 <img src="https://github.com/qb-0/PyMeow/blob/master/examples/screenshots/swbf_py.png" alt="alt text" width="650" height="450">
 
