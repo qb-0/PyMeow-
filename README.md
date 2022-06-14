@@ -18,7 +18,7 @@
 The linux version is still under progress but is ready to use and follows almost the windows api.
 ![Assault Cube ESP](https://github.com/qb-0/PyMeow/blob/master/examples/linux/ac_esp.py)
 ![CSGo ESP](https://github.com/qb-0/PyMeow/blob/master/examples/linux/csgo_esp.py)
-![Sauerbraten ESP](https://github.com/qb-0/PyMeow/blob/master/examples/linux/sauerbraten_esp.py)
+![Sauerbraten ESP+Aimbot](https://github.com/qb-0/PyMeow/blob/master/examples/linux/sauerbraten_espaim.py)
 
 ## [CSGo ESP](https://github.com/qb-0/PyMeow/blob/master/examples/csgo_esp.py):
 <img src="https://github.com/qb-0/PyMeow/blob/master/examples/screenshots/csgo_py.png" alt="alt text" width="650" height="450">
