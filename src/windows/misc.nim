@@ -35,6 +35,6 @@ proc mouseClick {.exportpy: "mouse_click".} =
     release: INPUT
   down.mi = MOUSE_INPUT(dwFlags: MOUSEEVENTF_LEFTDOWN)
   release.mi = MOUSE_INPUT(dwFlags: MOUSEEVENTF_LEFTUP)
-  SendInput(1, down.addr, cast[int32](sizeof(down)))
+  SendInput(1, down.addr, sizeof(down).int32)
   sleep(3)
-  SendInput(1, release.addr, cast[int32](sizeof(release)))
+  SendInput(1, release.addr, sizeof(release).int32)
