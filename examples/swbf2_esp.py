@@ -2,6 +2,12 @@ import sys
 from pymeow import *
 
 
+class Colors:
+    green = rgb("green")
+    red = rgb("red")
+    black = rgb("black")
+
+
 class Offsets:
     GameRenderer = 0x143FFBE10
     RenderView = 0x538
@@ -113,11 +119,11 @@ def main():
         local_player = Entity(local_player).read()
 
         if local_player:
+            vm = read_floats(mem, render_view + Offsets.ViewProj, 16)
             for ent in ent_loop():
                 if ent.team == local_player.team:
                     continue
 
-                vm = read_floats(mem, render_view + Offsets.ViewProj, 16)
                 ent.pos2d = wts(ent.pos3d, vm)
                 ent.headpos2d = wts(ent.headpos3d, vm)
 
@@ -130,8 +136,8 @@ def main():
                         ent.pos2d["y"],
                         width,
                         head + 5,
-                        rgb("green") if ent.visible else rgb("red"),
-                        rgb("black"),
+                        Colors.green if ent.visible else Colors.red,
+                        Colors.black,
                         0.15,
                     )
 
