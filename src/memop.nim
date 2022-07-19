@@ -48,6 +48,10 @@ proc writeInt16(a: Process, address: ByteAddress, data: int16) {.exportpy: "writ
 proc writeInts16(a: Process, address: ByteAddress, data: openArray[int16]) {.exportpy: "write_ints16".} = writeDatas
 proc writeInt64(a: Process, address: ByteAddress, data: int64) {.exportpy: "write_int64".} = writeData
 proc writeInts64(a: Process, address: ByteAddress, data: openArray[int64]) {.exportpy: "write_ints64".} = writeDatas
+proc writeUInt(a: Process, address: ByteAddress, data: uint32) {.exportpy: "write_uint".} = writeData
+proc writeUInts(a: Process, address: ByteAddress, data: openArray[uint32]) {.exportpy: "write_uints".} = writeDatas
+proc writeUInt64(a: Process, address: ByteAddress, data: uint64) {.exportpy: "write_uint64".} = writeData
+proc writeUInts64(a: Process, address: ByteAddress, data: openArray[uint64]) {.exportpy: "write_uints64".} = writeDatas
 proc writeFloat(a: Process, address: ByteAddress, data: float32) {.exportpy: "write_float".} = writeData
 proc writeFloats(a: Process, address: ByteAddress, data: openArray[float32]) {.exportpy: "write_floats".} = writeDatas
 proc writeFloat64(a: Process, address: ByteAddress, data: float64) {.exportpy: "write_float64".} = writeData
