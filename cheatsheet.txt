@@ -136,3 +136,4 @@ wts_dx(Overlay, matrix: float array (16), pos: Vec3) -> Vec2
 set_foreground(title: string)
 mouse_click()
 mouse_move(overlay: Overlay, x, y: float)
+help() -> shows this cheatsheet
