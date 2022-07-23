@@ -113,6 +113,12 @@ iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
     except:
       continue
 
+proc memoryErr(m: string, a: ByteAddress) {.inline.} =
+  raise newException(
+    AccessViolationDefect,
+    fmt"{m} failed [Address: 0x{a.toHex()}] [Error: {errno} - {strerror(errno)}]"
+  )
+
 proc read*(a: Process, address: ByteAddress, t: typedesc): t =
   var
     iosrc, iodst: IOVec
@@ -122,7 +128,8 @@ proc read*(a: Process, address: ByteAddress, t: typedesc): t =
   iodst.iov_len = size
   iosrc.iov_base = cast[pointer](address)
   iosrc.iov_len = size
-  discard process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0)
+  if process_vm_readv(a.pid, iodst.addr, 1, iosrc.addr, 1, 0) == -1:
+    memoryErr("Read", address)
   if a.debug:
     echo "[R] [", type(result), "] 0x", address.toHex(), " -> ", result
 
@@ -136,7 +143,8 @@ proc write*(a: Process, address: ByteAddress, data: auto) =
   iosrc.iov_len = size
   iodst.iov_base = cast[pointer](address)
   iodst.iov_len = size
-  discard process_vm_writev(a.pid, iosrc.addr, 1, iodst.addr, 1, 0)
+  if process_vm_writev(a.pid, iosrc.addr, 1, iodst.addr, 1, 0) == -1:
+    memoryErr("Write", address)
   if a.debug:
     echo "[W] [", type(data), "] 0x", address.toHex(), " -> ", data
 
