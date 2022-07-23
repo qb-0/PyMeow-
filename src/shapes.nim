@@ -140,8 +140,8 @@ proc radCircleV(pos: Vec2, radius: float, value: int, color: Rgb) {.exportpy: "r
   radCircle(pos.x, pos.y, radius, value, color)
 
 proc valueBar(x1, y1, x2, y2, width, maxValue, value: float, vertical: bool = true) {.exportpy: "value_bar".} =
-  if value > maxValue:
-    raise newException(Exception, "ValueBar: Max Value > value")
+  if value > maxValue or value < 0:
+    raise newException(Exception, "ValueBar: value > maxValue")
 
   let
     x = value / maxValue
