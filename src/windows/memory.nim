@@ -47,6 +47,14 @@ proc pidInfo(pid: int32): Process =
       )
       result.modules[nullTerminated($$me.szModule)] = m
 
+proc getError: string =
+  var 
+    errCode = osLastError()
+    errMsg = osErrorMsg(errCode)
+
+  stripLineEnd(errMsg)
+  fmt"[Error: {errCode} - {errMsg}]"
+
 proc processPlatform(a: Process): int {.exportpy: "process_platform".} =
   if a.handle == 0:
     raise newException(Exception, "Unable to determite process platform (no open handle)")
@@ -56,7 +64,7 @@ proc processPlatform(a: Process): int {.exportpy: "process_platform".} =
     return 32
   var isWow: BOOL
   if IsWow64Process(a.handle, isWow.addr) == FALSE:
-    raise newException(Exception, fmt"process_platform failed [Error: {GetLastError()}]")
+    raise newException(Exception, fmt"process_platform failed {getError()}")
   if isWow == TRUE: 32 else: 64
 
 proc processByPid(pid: int32, debug: bool = false, rights: int32 = PROCESS_ALL_ACCESS): Process {.exportpy: "process_by_pid".} =
@@ -65,7 +73,7 @@ proc processByPid(pid: int32, debug: bool = false, rights: int32 = PROCESS_ALL_A
   result.debug = debug
   result.platform = processPlatform(result)
   if result.handle == FALSE:
-    raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] [Error code: {GetLastError()}]")
+    raise newException(Exception, fmt"Unable to open Process [Pid: {pid}] {getError()}")
 
 proc processByName(name: string, debug: bool = false, rights: int32 = PROCESS_ALL_ACCESS): Process {.exportpy: "process_by_name".} =
   var
@@ -81,7 +89,7 @@ proc processByName(name: string, debug: bool = false, rights: int32 = PROCESS_AL
       if p.handle != 0:
         p.platform = processPlatform(p)
         return p
-      raise newException(Exception, fmt"Unable to open Process [Pid: {p.pid}] [Error code: {GetLastError()}]")
+      raise newException(Exception, fmt"Unable to open Process [Pid: {p.pid}] {getError()}")
   raise newException(Exception, fmt"Process '{name}' not found")
 
 iterator enumerateProcesses: Process {.exportpy: "enumerate_processes".} =
@@ -104,7 +112,7 @@ proc kill(a: Process): bool {.exportpy.} =
 proc memoryErr(m: string, a: ByteAddress) {.inline.} =
   raise newException(
     AccessViolationDefect,
-    fmt"{m} failed [Address: 0x{a.toHex()}] [Error: {GetLastError()}]"
+    fmt"{m} failed [Address: 0x{a.toHex()}] {getError()}"
   )
 
 proc read*(a: Process, address: ByteAddress, t: typedesc): t =
