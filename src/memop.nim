@@ -10,7 +10,7 @@ pyExportModule("pymeow")
 proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int], size: int = 8): ByteAddress {.exportpy: "pointer_chain".} =
   result = if size == 8: a.read(baseAddr, ByteAddress) else: a.read(baseAddr, int32) 
   for o in offsets[0..^2]:
-    result = if size == 8: a.read(result + o, ByteAddress) else: a.read(baseAddr, int32)
+    result = if size == 8: a.read(result + o, ByteAddress) else: a.read(result + o, int32)
   result = result + offsets[^1]
 
 proc readString(a: Process, address: ByteAddress, size: int = 30): string {.exportpy: "read_string".} =
