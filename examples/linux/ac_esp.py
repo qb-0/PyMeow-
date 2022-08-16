@@ -75,7 +75,11 @@ def main():
         for i in range(31):
             ent_addr = read_int(mem, entity_list + i * 8)
             if ent_addr != 0 and ent_addr != local_player_addr:
-                ent_obj = Entity(ent_addr, mem)
+                try:
+                    ent_obj = Entity(ent_addr, mem)
+                except:
+                    continue 
+
                 if ent_obj.health > 0:
                     try:
                         ent_obj.pos2d = wts_ogl(overlay, matrix, ent_obj.pos3d)
