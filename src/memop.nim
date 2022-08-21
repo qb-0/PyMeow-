@@ -1,3 +1,4 @@
+import std/[encodings, strutils]
 import nimpy, vector
 
 when defined(windows):
@@ -16,6 +17,10 @@ proc pointerChain(a: Process, baseAddr: ByteAddress, offsets: openArray[int], si
 proc readString(a: Process, address: ByteAddress, size: int = 30): string {.exportpy: "read_string".} =
   let s = a.readSeq(address, size, char)
   $cast[cstring](s[0].unsafeAddr)
+
+proc bytesToString(a: Process, address: ByteAddress, size: int): string {.exportpy: "bytes_to_string".} =
+  let s = a.readSeq(address, size, char)
+  s.join("").convert("utf-8", "utf-16")
 
 proc readInt(a: Process, address: ByteAddress): int32 {.exportpy: "read_int".} = a.read(address, int32)
 proc readInts(a: Process, address: ByteAddress, size: int32): seq[int32] {.exportpy: "read_ints".} = a.readSeq(address, size, int32)
