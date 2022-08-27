@@ -38,3 +38,9 @@ proc mouseClick {.exportpy: "mouse_click".} =
   SendInput(1, down.addr, sizeof(down).int32)
   sleep(3)
   SendInput(1, release.addr, sizeof(release).int32)
+
+proc mousePosition: (int32, int32) {.exportpy: "mouse_position".} =
+  var point: POINT
+  discard GetCursorPos(point.addr)
+  (point.x, point.y)
+
