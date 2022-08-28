@@ -4,7 +4,9 @@ import
 
 pyExportModule("pymeow")
 
-var display = XOpenDisplay(nil)
+var 
+  display = XOpenDisplay(nil)
+  root = XRootWindow(display, 0)
 
 proc keyPressed*(key: KeySym): bool {.exportpy: "key_pressed".} =
   var keys: array[0..31, char]
@@ -31,3 +33,12 @@ proc mouseMove*(x, y: cint, relative: bool = false) {.exportpy: "mouse_move".} =
   else:
     discard XTestFakeMotionEvent(display, -1, x, y, CurrentTime)
   discard XFlush(display)
+
+proc mousePosition: (int32, int32) {.exportpy: "mouse_position".} =
+  var 
+    qRoot, qChild: Window
+    qRootX, qRootY, qChildX, qChildY: cint
+    qMask: cuint
+
+  discard XQueryPointer(display, root, qRoot.addr, qChild.addr, qRootX.addr, qRootY.addr, qChildX.addr, qChildY.addr, qMask.addr)
+  (qRootX, qRootY)
