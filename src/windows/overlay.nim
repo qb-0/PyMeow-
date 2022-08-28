@@ -87,18 +87,24 @@ proc loop(a: Overlay, update: bool = true, delay: int = 0): bool {.exportpy: "ov
     a.update()
   not OverlayWindow.windowShouldClose()
 
-proc hide(a: Overlay) {.exportpy: "overlay_hide".} =
+proc hide {.exportpy: "overlay_hide".} =
   let visible = OverlayWindow.getWindowAttrib(GLFWVisible)
   if visible == GLFWTrue:
     OverlayWindow.hideWindow()
   else:
     OverlayWindow.showWindow()
 
-proc setTitle(a: Overlay, title: string) {.exportpy: "overlay_set_title".} =
+proc setTitle(title: string) {.exportpy: "overlay_set_title".} =
   OverlayWindow.setWindowTitle(title)
 
 proc setPos(a: Overlay, x, y: int32) {.exportpy: "overlay_set_pos".} =
   SetWindowPos(a.hwnd, -1, x, y, 0, 0, 0x0001)
+
+proc toggle_mouse {.exportpy: "overlay_toggle_mouse".} =
+  if OverlayWindow.getWindowAttrib(GLFWMouseButtonPassthrough) == GLFWTrue:
+    OverlayWindow.setWindowAttrib(GLFWMouseButtonPassthrough, GLFWFalse)
+  else:
+    OverlayWindow.setWindowAttrib(GLFWMouseButtonPassthrough, GLFWTrue)
 
 proc fontInit(height: int32, fontName: string): Font {.exportpy: "font_init".} =
   result.fontHDC = wglGetCurrentDC()
